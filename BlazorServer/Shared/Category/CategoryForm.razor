@@ -1,0 +1,42 @@
+﻿@inject UtilsJavaScript js
+
+
+@* Deve se definir o modelo que esse formulario vai implementar no componente EditForm *@
+<EditForm Model="@CategoryDTO" OnValidSubmit="@OnValidSubmit">
+    @* Para ativar o componente ValidationMessage *@
+    <DataAnnotationsValidator />
+
+    @* oninput="@(() => js.ClearBorderAndNotification())" *@
+    <div style="padding:10px 0">
+        <label form="nome">Nome</label>
+        <InputText id="txtCategoriaNome" @bind-Value="CategoryDTO.Name" class="form-control" />
+        <span class="notification-inputs"></span>
+        <div style="margin-top:5px">
+            <ValidationMessage For="@(() => CategoryDTO.Name)" />
+        </div>
+    </div>
+
+    <div style="padding:10px 0">
+        <a href="categories" class="btn btn-outline-dark">@ButtonTextVoltar</a>&nbsp;&nbsp;
+        <button type="submit" class="btn btn-success">@ButtonTextSubmit</button>
+    </div>
+
+</EditForm>
+
+
+
+@code {
+
+    [Parameter]
+    public CategoryDTO? CategoryDTO { get; set; }
+
+    [Parameter]
+    public string? ButtonTextSubmit { get; set; } = "Salvar";
+
+    [Parameter]
+    public string? ButtonTextVoltar { get; set; } = "Voltar";
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+}

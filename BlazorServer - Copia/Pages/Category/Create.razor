@@ -1,0 +1,27 @@
+﻿@page "/category/create"
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject UtilsJavaScript js
+
+<h2>Nova Categoria</h2>
+
+<CategoryForm CategoryDTO="@categoria" OnValidSubmit="@CriarCategoria" />
+
+@code {
+
+    CategoryDTO categoria = new CategoryDTO();
+
+    /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await js.FocusById("txtCategoriaNome");
+    }
+
+
+    private async Task CriarCategoria()
+    {
+        await http.PostAsJsonAsync("api/category", categoria);
+        navigation.NavigateTo("categories");
+    }
+}

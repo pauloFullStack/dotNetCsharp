@@ -1,0 +1,32 @@
+﻿@page "/category/{id:int}/edit/"
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject UtilsJavaScript js
+
+<h3>Editar Categoria</h3>
+
+<CategoryForm CategoryDTO="@categoria" OnValidSubmit="@EditarCategoria" />
+
+@code {
+
+    [Parameter]
+    public int id { get; set; }
+
+    CategoryDTO categoria = new CategoryDTO();
+
+    /* OnParametersSetAsync é outro método do ciclo de vida em páginas Razor no ASP.NET Core.
+     * Assim como o OnInitializedAsync, ele lida com a inicialização da página, mas é específico para a
+     * atualização de parâmetros. */
+    protected async override Task OnParametersSetAsync()
+    {
+        categoria = await http.GetFromJsonAsync<CategoryDTO>($"api/category/{id}");
+    }
+
+    private async Task EditarCategoria()
+    {
+        await http.PutAsJsonAsync("api/category", categoria);
+        navigation.NavigateTo("categories");
+    }
+
+
+}

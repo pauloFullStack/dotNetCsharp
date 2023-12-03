@@ -1,0 +1,17 @@
+﻿@page "/"
+@using BlazorServer.Services
+@inject IdentityInformation _identity;
+
+<h1>Home</h1>
+
+<br />
+<br />
+
+<p>User is authenticated: @_identity.IsAuthenticated </p>
+<p>Username: @(_identity.UserName ?? "No username available")</p>
+
+@code {
+
+}
+
+
