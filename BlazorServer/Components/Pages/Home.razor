@@ -1,13 +1,14 @@
 ﻿@using Application.DTOs
 @inject IJSRuntime js
+@rendermode InteractiveServer
 
 @page "/"
 
-@inject BlazorServerSSR.Services.CategoryService CategoryService
+@inject BlazorServer.Services.CategoryService CategoryService
 
-@* <button @onclick="CallJavaScriptFunction">Chamar função JavaScript</button> *@
+<button @onclick="CallJavaScriptFunction">Chamar função JavaScript</button>
 
-@*
+@* Implementado javascript, agora passar tudo para esse projeto que esta no outro, até o layout, cdn bootstrap ... *@
 <PageTitle>Home</PageTitle>
 
 <h1>DOM Cleanup Example</h1>
@@ -56,33 +57,33 @@ else
     </table>
 
 }
- *@
+
 
 
 @code {
 
     private List<CategoryDTO>? _categories;
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     // await js.InvokeVoidAsync("alert", "OnAfterRender");
-    //     _categories = (await CategoryService.GetAllCategoriesAsync()).ToList();
-    // }
-
-
-    // private async Task CallJavaScriptFunction()
-    // {
-    //     // await JSRuntime.InvokeVoidAsync("nomeDaFuncaoJavaScript");
-    //     await js.InvokeVoidAsync("alert", "OnAfterRender");
-    // }
-
-
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-
-        await js.InvokeVoidAsync("alert", "OnAfterRender");
-
+        // await js.InvokeVoidAsync("alert", "OnAfterRender");
+        _categories = (await CategoryService.GetAllCategoriesAsync()).ToList();
     }
+
+
+    private async Task CallJavaScriptFunction()
+    {
+        // await JSRuntime.InvokeVoidAsync("nomeDaFuncaoJavaScript");
+        await js.InvokeVoidAsync("alert", "Testando javascript");
+    }
+
+
+
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+
+    //     await js.InvokeVoidAsync("alert", "OnAfterRender");
+
+    // }
 
 }

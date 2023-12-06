@@ -17,3 +17,8 @@
     }
 
 }
+
+window.nomeDaFuncaoJavaScript = function () {
+    // Código JavaScript a ser executado
+    console.log('Função JavaScript foi chamada a partir do código C#!');
+};
