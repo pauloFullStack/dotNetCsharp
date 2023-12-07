@@ -1,7 +1,6 @@
 using BlazorServer.Components;
 using Infra.IoC;
 using Microsoft.AspNetCore.Components;
-using BlazorServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +16,8 @@ builder.Services.AddScoped(sp =>
     return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
 });
 
-builder.Services.AddScoped<CategoryService>();
+// Adicionando controllers para usar api ou controllers tradicionais mesmo
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -30,6 +30,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Para mapear controllers para usar api
+app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

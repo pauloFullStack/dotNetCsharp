@@ -4,26 +4,38 @@ using AutoMapper;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace BlazorServer.Services
 {
-    public class CategoryService : ControllerBase
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
-        public CategoryService(ICategoryService categoryService, IMapper mapper)
+        public CategoryController(ICategoryService categoryService, IMapper mapper)
         {
             _categoryService = categoryService;
             _mapper = mapper;
         }
 
-
-        public async Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync()
+        [HttpGet("all")]
+        public async Task<IEnumerable<CategoryDTO>> Get()
         {
-            return await _categoryService.GetCategoriesAsync();
+            try
+            {
+                return await _categoryService.GetCategoriesAsync();
+            }
+            catch
+            {
+                throw new CategoryExceptions("Erro: contate o suporte");
+            }
         }
 
-        public async Task<CategoryDTO> PickOnlyOneCategoryAsync(int id)
+
+        [HttpGet("{id}", Name = "GetByIdAsync")]
+        public async Task<CategoryDTO> Get(int id)
         {
             try
             {
@@ -36,20 +48,22 @@ namespace BlazorServer.Services
         }
 
 
-        //public async Task<IEnumerable<CategoryDTO>> Get([FromQuery] PaginationDTO paginationDTO)
-        //{
-        //    try
-        //    {
-        //        return await _categoryService.GetPaginationAndSearch(paginationDTO, HttpContext);
-        //    }
-        //    catch
-        //    {
-        //        throw new CategoryExceptions("Erro: contate o suporte");
-        //    }
-        //}
+        [HttpGet]
+        public async Task<IEnumerable<CategoryDTO>> Get([FromQuery] PaginationDTO paginationDTO)
+        {
+            try
+            {
+                return await _categoryService.GetPaginationAndSearch(paginationDTO, HttpContext);
+            }
+            catch
+            {
+                throw new CategoryExceptions("Erro: contate o suporte");
+            }
+        }
 
 
-        public async Task<ActionResult<CategoryDTO>> CreateCategoryAsync(CategoryDTO categoriaDTO)
+        [HttpPost]
+        public async Task<ActionResult<CategoryDTO>> Post(CategoryDTO categoriaDTO)
         {
 
             if (!ModelState.IsValid)
@@ -71,7 +85,8 @@ namespace BlazorServer.Services
         }
 
 
-        public async Task<object> UpdateCategoryAsync(CategoryDTO categoriaDTO)
+        [HttpPut]
+        public async Task<object> Put(CategoryDTO categoriaDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -91,7 +106,8 @@ namespace BlazorServer.Services
         }
 
 
-        public async Task<object> DeleteCategoryAsync(int id)
+        [HttpDelete("{id}")]
+        public async Task<object> Delete(int id)
         {
 
             try
