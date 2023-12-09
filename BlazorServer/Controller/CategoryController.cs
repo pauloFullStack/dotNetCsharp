@@ -65,19 +65,19 @@ namespace BlazorServer.Services
         [HttpPost]
         public async Task<ActionResult<CategoryDTO>> Post(CategoryDTO categoriaDTO)
         {
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); // Retorna os erros de validação
-            }
-
             try
             {
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState); // Retorna os erros de validação
+                }
+
                 /* Ver como retorna annotations o erros que estão nos modelos, para mostrar na view */
                 await _categoryService.AddAsync(categoriaDTO);
                 return new CreatedAtRouteResult("GetByIdAsync", new { id = categoriaDTO.Id }, categoriaDTO);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw new CategoryExceptions("Erro: contate o suporte");
             }
@@ -88,17 +88,17 @@ namespace BlazorServer.Services
         [HttpPut]
         public async Task<object> Put(CategoryDTO categoriaDTO)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); // Retorna os erros de validação
-            }
-
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState); // Retorna os erros de validação
+                }
+
                 await _categoryService.UpdateAsync(categoriaDTO);
                 return new { message = "Categoria atualizada com sucesso!" };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw new CategoryExceptions("Erro: contate o suporte");
             }

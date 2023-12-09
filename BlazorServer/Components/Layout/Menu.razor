@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager Navigation
+@inject IJSRuntime js
 @rendermode InteractiveServer
 
 <div style="display:flex;align-items:center;justify-content:space-between;margin:1rem;border-bottom: .1rem solid #000">
@@ -7,8 +8,8 @@
     </div>
     <div style="margin-bottom:15px">
         <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
             </svg>
         </a>
     </div>
@@ -19,25 +20,26 @@
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasRightLabel">Crud</h5>
         <a href="#" data-bs-dismiss="offcanvas" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
             </svg>
         </a>
     </div>
     <div class="offcanvas-body">
-        <button data-bs-dismiss="offcanvas" @onclick="Redirect">Inicio</button>
+        <a href="#" data-bs-dismiss="offcanvas" @onclick="Redirect">Inicio</a>
     </div>
 </div>
 
 
 @code {
 
-
-    private void Redirect(){
-
+    
+    private void Redirect()
+    {
+        js.InvokeVoidAsync("closeOffcanvas");
         Navigation.NavigateTo("/");
     }
 
-    
+
 
 }
