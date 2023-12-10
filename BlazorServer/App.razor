@@ -1,0 +1,32 @@
+﻿@using BlazorServer.Models
+@inject IdentityInformation _identity;
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+                <NotAuthorized>
+                    <h1>Acesso Negado</h1>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Pagina não encotrada, redicionar para o login se não estiver logado, se estiver redirecionar para pagina home.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code {
+
+    [Parameter]
+    public InitialApplicationState? InitialState { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _identity.UserName = InitialState?.UserName;
+        _identity.IsAuthenticated = InitialState.IsAuthenticated;
+    }
+}

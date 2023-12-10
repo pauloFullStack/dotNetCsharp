@@ -62,7 +62,7 @@ namespace Infra.Data.Repositories
                 return await queryable.Page(pagination).ToListAsync();
 
             }
-            catch
+            catch(Exception ex)
             {
                 throw;
             }

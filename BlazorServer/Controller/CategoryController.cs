@@ -1,11 +1,12 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
-using AutoMapper;
-using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Domain.Exceptions;
+using AutoMapper;
+using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
-
-namespace BlazorServer.Services
+namespace BlazorServer.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,6 +21,7 @@ namespace BlazorServer.Services
             _mapper = mapper;
         }
 
+        //Ver como autenticar api
         [HttpGet("all")]
         public async Task<IEnumerable<CategoryDTO>> Get()
         {
@@ -55,7 +57,7 @@ namespace BlazorServer.Services
             {
                 return await _categoryService.GetPaginationAndSearch(paginationDTO, HttpContext);
             }
-            catch
+            catch(Exception e)
             {
                 throw new CategoryExceptions("Erro: contate o suporte");
             }
@@ -65,19 +67,19 @@ namespace BlazorServer.Services
         [HttpPost]
         public async Task<ActionResult<CategoryDTO>> Post(CategoryDTO categoriaDTO)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Retorna os erros de validação
+            }
+
             try
             {
-
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState); // Retorna os erros de validação
-                }
-
                 /* Ver como retorna annotations o erros que estão nos modelos, para mostrar na view */
                 await _categoryService.AddAsync(categoriaDTO);
                 return new CreatedAtRouteResult("GetByIdAsync", new { id = categoriaDTO.Id }, categoriaDTO);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new CategoryExceptions("Erro: contate o suporte");
             }
@@ -88,17 +90,17 @@ namespace BlazorServer.Services
         [HttpPut]
         public async Task<object> Put(CategoryDTO categoriaDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Retorna os erros de validação
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState); // Retorna os erros de validação
-                }
-
                 await _categoryService.UpdateAsync(categoriaDTO);
                 return new { message = "Categoria atualizada com sucesso!" };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new CategoryExceptions("Erro: contate o suporte");
             }
@@ -121,5 +123,7 @@ namespace BlazorServer.Services
             }
 
         }
+
+
     }
 }

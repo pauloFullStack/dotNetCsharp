@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Mappings
 {
@@ -14,7 +15,8 @@ namespace Application.Mappings
         public DomainToDTOMappingProfile()
         {
             CreateMap<Category, CategoryDTO>().ReverseMap();
-            CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<IdentityUser, UserDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<Pagination, PaginationDTO>().ReverseMap();
         }
     }

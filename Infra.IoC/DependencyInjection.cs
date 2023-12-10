@@ -40,11 +40,11 @@ namespace Infra.IoC
 
             /* Registrando Repositorys */
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             /* Registrando Services */
-            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IUserService, UserService>();
 
             /* Registrando Mapeamento de Entidades para objetos de transferência DTOs */
             services.AddAutoMapper(typeof(DomainToDTOMappingProfile));

@@ -23,7 +23,8 @@ namespace Domain.Entities
             Id = id;
         }
 
-        public ICollection<Product> Products { get; set; }
+        // Traz produtos relacionados a categoria 
+        //public ICollection<Product> Products { get; set; }
 
 
         public void Update(string name)
