@@ -29,7 +29,7 @@ else
                 <tr>
                     <td>@userDTO.Id</td>
                     <td>@userDTO.UserName</td>
-                    <td><a class="btn btn-primary">Novo Perfil</a></td>
+                    <td><a href="/addRoleUser/@userDTO.Id" class="btn btn-primary">Novo Perfil</a></td>
                     <td><button class="btn btn-danger" @onclick="@(() => DeletarCategoria(userDTO.Id, userDTO.UserName))">Deletar</button></td>
                 </tr>
             }
@@ -76,15 +76,7 @@ else
     {
         await http.DeleteAsync($"api/user/{IdUser}");
         _confirma.Ocultar();
-
-        // if (TotalCategoriasPorPaginas == 1 && paginaAtual > 1)
-        // {
-        //     await CarregaCategorias(--paginaAtual);
-        // }
-        // else
-        // {
-        //     await CarregaCategorias(paginaAtual);
-        // }
+        _userDTO = _userDTO.Where(user => user.Id != Guid.Parse(IdUser)).ToList();
 
     }
 

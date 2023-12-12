@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Application.Mappings;
 using Application.Services;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infra.Data.Context;
 using Infra.Data.Repositories;
@@ -41,10 +42,12 @@ namespace Infra.IoC
             /* Registrando Repositorys */
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAspNetRolesRepository, AspNetRolesRepository>();
 
             /* Registrando Services */
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAspNetRolesService, AspNetRolesService>();
 
             /* Registrando Mapeamento de Entidades para objetos de transferência DTOs */
             services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
