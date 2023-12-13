@@ -1,7 +1,133 @@
-﻿@page "/addRoleUser/{id:guid}"
+﻿@page "/addRoleUser/{id}"
+@inject HttpClient http
+@inject IWebHostEnvironment Env
+@inject NavigationManager NavigationManager
 
 <h2>Atribuir Perfil ao usuário</h2>
 
-@code {
+<br />
+
+@if (Exibir)
+{
+    <div style="display:flex;align-items:center;justify-content:center;padding:20px;border: solid .1rem #000;border-radius:5px;margin-bottom:15px">
+        <span>@Mensagem</span>
+        <button class="btn btn-outline-info" @onclick="CloseMessageNotification">Fechar</button>
+    </div>
+}
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label class="control-label">Id</label>
+                <input class="form-control" @bind="@_user.Id" disabled />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Nome</label>
+                <input class="form-control" @bind="@_user.UserName" disabled />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Email</label>
+                <input class="form-control" @bind="@_user.Email" disabled />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Roles: </label>
+                <select @onchange="RoleSelectionChanged" class="form-control">
+                    @if (_roles != null)
+                    {
+                        @foreach (var role in _roles)
+                        {
+                            <option value="@role.Id">@role.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:15px" class="row">
+        <div class="form-group">
+            <input type="button" class="btn btn-outline-dark" @onclick="@Cancel" value="Cancelar" />
+            <input type="button" class="btn btn-primary" @onclick="@UpdateRole" value="Atribuir" />
+        </div>
+    </div>
+</form>
+
+@code
+{
+    List<AspNetRolesDTO> _roles;
+
+    UserDTO _user = new UserDTO();
+
+    bool Exibir = false;
+
+    [Parameter]
+    public string? Mensagem { get; set; }
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _user = await http.GetFromJsonAsync<UserDTO>($"api/user/{Id}");
+            await LoadRoles();
+        }
+        catch (Exception ex)
+        {
+
+            Exibir = true;
+            if (Env.IsDevelopment())
+            {
+                Mensagem = $"Erro ao acessar os dados...\n {ex.StackTrace.ToString()} \n\n {ex.Message}";
+            }
+            else
+            {
+                Mensagem = "Não foi possível ao acessar os dados do perfil do usuário...";
+            }
+        }
+    }
+
+    void CloseMessageNotification()
+    {
+        Exibir = false;
+    }
+
+    private async Task LoadRoles()
+    {
+        var httpResponse = await http.GetAsync("api/AspNetRoles/all");
+
+        if (httpResponse.IsSuccessStatusCode)
+        {
+            _roles = JsonSerializerGeneric<AspNetRolesDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
+            _user.RoleId = _roles[0].Id;
+        }
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("users");
+    }
+
+
+    void RoleSelectionChanged(ChangeEventArgs e)
+    {
+        _user.RoleId = e.Value.ToString();
+    }
+
+    public async Task UpdateRole()
+    {
+        try
+        {
+            await http.PutAsJsonAsync("api/user", _user);
+            Exibir = true;
+            Mensagem = $"O perfil foi atribuido ao usuário: {_user.UserName} com sucesso";
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
 
 }

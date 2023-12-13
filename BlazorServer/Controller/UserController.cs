@@ -69,7 +69,7 @@ namespace BlazorServer.Controller
         {
 
             try
-            {   // Ver como estar implementado o retorno do delete e update do category e fazer aqui e no update e delete
+            {   
                 await _userService.DeleteUserAsync(id);
                 return true;
             }
