@@ -131,7 +131,7 @@ else
                 StateHasChanged();
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             await js.InvokeVoidAsync("showErroCategory", "erroCategory", "Erro category teste");
         }

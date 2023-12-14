@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorServer.Controller
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -57,7 +58,7 @@ namespace BlazorServer.Controller
             {
                 return await _categoryService.GetPaginationAndSearch(paginationDTO, HttpContext);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new CategoryExceptions("Erro: contate o suporte");
             }

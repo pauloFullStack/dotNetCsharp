@@ -3,11 +3,13 @@ using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
 using Domain.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorServer.Controller
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AspNetRolesController : ControllerBase
