@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorServer.Controller
 {
-
+    [Authorize(AuthenticationSchemes ="Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase

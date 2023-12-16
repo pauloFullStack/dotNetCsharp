@@ -5,11 +5,13 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infra.Data.Context;
 using Infra.Data.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -28,16 +30,29 @@ namespace Infra.IoC
 
             services.AddDbContextFactory<ApplicationDbContext>(options => options.UseMySql(configuration.GetConnectionString("ConnectionUser"), ServerVersion.AutoDetect(configuration.GetConnectionString("ConnectionUser"))));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 5;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.SignIn.RequireConfirmedAccount = false;
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            // JWT
+            // Adiciona o manipulador de autenticação e define o 
+            // esquema de autenticação usado : Bearer
+            // valida o emissor, a audiencia e a chave 
+            // usando a chave secreta valida a assinatura
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidAudience = configuration["TokenConfiguration:Audience"],
+                        ValidIssuer = configuration["TokenConfiguration:Issuer"],
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:key"]))
+                    }
+                );
 
             /* Registrando Repositorys */
             services.AddScoped<ICategoryRepository, CategoryRepository>();

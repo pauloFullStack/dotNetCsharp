@@ -4,6 +4,8 @@
 @using Application.DTOs
 @inject IJSRuntime js
 @using System.Text.Json
+@using System.Net.Http;
+@using System.Net.Http.Headers;
 
 
 
@@ -112,6 +114,10 @@ else
     {
         try
         {
+
+            var token = ""; // Obtenha o token de autenticação do Blazor Server
+            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             var httpResponse = await http.GetAsync($"api/category?pagina={pagina}&quantidadePorPagina={quantidadePorPagina}&nomeFiltro={nomeFiltro}");
             if (httpResponse.IsSuccessStatusCode)
             {

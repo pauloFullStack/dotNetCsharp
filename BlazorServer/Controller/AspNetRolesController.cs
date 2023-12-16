@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorServer.Controller
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AspNetRolesController : ControllerBase
     {
         private readonly IAspNetRolesService _aspNetRolesService;
