@@ -59,7 +59,7 @@ namespace BlazorServer.Controller
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] UserModel userInformation)
+        public async Task<IActionResult> Login(UserModel userInformation)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
@@ -67,7 +67,7 @@ namespace BlazorServer.Controller
             var result = await _signInManager.PasswordSignInAsync(userInformation.Email, userInformation.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
-            {
+            {                
                 return Ok(GenerateToken(userInformation));
             }
             else

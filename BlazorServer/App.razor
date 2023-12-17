@@ -1,6 +1,28 @@
 ﻿@using BlazorServer.Models
 @inject IdentityInformation _identity;
 
+@* <CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData">
+                <NotAuthorized>
+                    <BlazorServer.Pages.Login.Index />
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <AuthorizeView>
+                <Authorized>
+                    <BlazorServer.Pages.Index />
+                </Authorized>
+                <NotAuthorized>
+                    <BlazorServer.Pages.Login.Index />
+                </NotAuthorized>
+            </AuthorizeView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState> *@
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
@@ -21,12 +43,12 @@
 
 @code {
 
-    [Parameter]
-    public InitialApplicationState? InitialState { get; set; }
+    // [Parameter]
+    // public InitialApplicationState? InitialState { get; set; }
 
-    protected override void OnInitialized()
-    {
-        _identity.UserName = InitialState?.UserName;
-        _identity.IsAuthenticated = InitialState.IsAuthenticated;
-    }
+    // protected override void OnInitialized()
+    // {
+    //     _identity.UserName = InitialState?.UserName;
+    //     _identity.IsAuthenticated = InitialState.IsAuthenticated;
+    // }
 }

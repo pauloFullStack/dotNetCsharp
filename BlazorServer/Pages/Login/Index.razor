@@ -1,0 +1,61 @@
+﻿@page "/login"
+@using BlazorServer.Models
+@using Newtonsoft.Json
+@inject IJSRuntime js
+@inject HttpClient http
+@inject NavigationManager navigation
+
+<div class="container">
+    <div class="row align-items-center justify-content-center" style="height: 70vh;">
+        <div class="col-lg-4 col-md-5 col-sm-8 col-xl-4 ">
+            <div class="div-login">
+
+                <div class="pb-2 text-center">
+                    <h3>Title System</h3>
+                </div>
+                <div class="pt-3">
+                    <input type="text" @bind-value="userLogin.Email" class="form-control" />
+                </div>
+                <div class="pt-3">
+                    <input type="password" @bind-value="userLogin.Password" class="form-control" />
+                </div>
+                <div class="pt-3">
+                    <button class="btn btn-outline-primary" style="width:100%" @onclick="Login">Entrar</button>
+                </div>
+                <div class="text-center pt-3">
+                    <a class="btn btn-link" style="font-size:12px;width:100%;padding-bottom:0">Registrar</a>
+                    <a class="btn btn-link" style="font-size:12px;width:100%">Esqueceu a senha?</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    UserModel userLogin = new UserModel();
+
+    private async Task Login()
+    {
+        userLogin.ConfirmPassword = userLogin.Password;
+        var response = await http.PostAsJsonAsync("api/ResourcesLoginUser/login", userLogin);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            UserToken authenticationResult = JsonConvert.DeserializeObject<UserToken>(json);
+            string token = authenticationResult.Token;
+            await js.InvokeVoidAsync("localStorage.setItem", "accessToken", token);
+            navigation.NavigateTo("/categories");
+        }
+        else
+        {
+            // Trate a resposta de erro, se necessário
+        }
+
+
+    }
+
+}

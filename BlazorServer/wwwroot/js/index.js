@@ -33,3 +33,18 @@ function clearBorderAndNotification() {
     if (document.querySelector(`.validation-message`))
         document.querySelector(`.validation-message`).innerHTML = '';
 }
+
+
+function getCookie(name) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // Verifica se o cookie começa com o nome fornecido
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return null;
+}

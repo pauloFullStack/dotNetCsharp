@@ -10,6 +10,11 @@
             await SignInManager.SignOutAsync();
         }
 
+        Response.Cookies.Append("accessToken", "", new CookieOptions
+            {
+                Expires = DateTime.UtcNow.AddDays(-1)
+            });
+
         return Redirect("/Identity/Account/Login");
     }
 }

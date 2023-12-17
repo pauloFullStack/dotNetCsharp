@@ -1,4 +1,18 @@
 ﻿@page "/"
+@attribute [Authorize]
+@* @inject IJSRuntime js *@
 
-<h3>Pagina publica</h3>
+<h3>Home</h3>
 
+@* @code {
+    [Parameter]
+    public string? token { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!string.IsNullOrEmpty(token))
+        {
+            await js.InvokeVoidAsync("localStorage.setItem", "accessToken", token);
+        }
+    }
+} *@

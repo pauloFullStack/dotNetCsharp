@@ -30,9 +30,29 @@ namespace Infra.IoC
 
             services.AddDbContextFactory<ApplicationDbContext>(options => options.UseMySql(configuration.GetConnectionString("ConnectionUser"), ServerVersion.AutoDetect(configuration.GetConnectionString("ConnectionUser"))));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 5;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.SignIn.RequireConfirmedAccount = false;
+
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            //services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            //{
+            //    options.Password.RequireDigit = false;
+            //    options.Password.RequiredLength = 5;
+            //    options.Password.RequireLowercase = false;
+            //    options.Password.RequireUppercase = false;
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.SignIn.RequireConfirmedAccount = false;
+
+            //}).AddEntityFrameworkStores<ApplicationDbContext>();
 
             // JWT
             // Adiciona o manipulador de autenticação e define o 
@@ -52,7 +72,14 @@ namespace Infra.IoC
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:key"]))
                     }
-                );
+                )
+                .AddCookie(options =>
+                {
+                    options.Cookie.Name = "blazorCookie"; // Defina o nome do cookie, se necessário
+                    options.ExpireTimeSpan = TimeSpan.FromHours(2); // Defina o tempo de expiração do cookie
+                                                                       // Outras opções de configuração podem ser adicionadas conforme necessário
+                });
+
 
             /* Registrando Repositorys */
             services.AddScoped<ICategoryRepository, CategoryRepository>();
