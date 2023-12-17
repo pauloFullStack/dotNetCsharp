@@ -5,6 +5,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infra.Data.Context;
 using Infra.Data.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -30,16 +31,7 @@ namespace Infra.IoC
 
             services.AddDbContextFactory<ApplicationDbContext>(options => options.UseMySql(configuration.GetConnectionString("ConnectionUser"), ServerVersion.AutoDetect(configuration.GetConnectionString("ConnectionUser"))));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 5;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.SignIn.RequireConfirmedAccount = false;
-
-            })
+            services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -60,6 +52,8 @@ namespace Infra.IoC
             // valida o emissor, a audiencia e a chave 
             // usando a chave secreta valida a assinatura
 
+
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -72,14 +66,38 @@ namespace Infra.IoC
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:key"]))
                     }
-                )
-                .AddCookie(options =>
-                {
-                    options.Cookie.Name = "blazorCookie"; // Defina o nome do cookie, se necessário
-                    options.ExpireTimeSpan = TimeSpan.FromHours(2); // Defina o tempo de expiração do cookie
-                                                                       // Outras opções de configuração podem ser adicionadas conforme necessário
-                });
+                );
 
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.Name = "tokenAspNet"; // Nome personalizado para o cookie
+            //    //options.LoginPath = "/login"; // redireciona
+
+            //});
+
+            services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, options =>
+            {
+                options.Cookie.Name = "tokenAspNet"; // Nome personalizado para o cookie
+            });
+
+            // Cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder =>
+                    {
+                        // MUDAR PARA O DOMINIO QUANDO FOR SUBIR PARA PRODUÇÃO
+                        builder.WithOrigins("https://localhost:7210")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials();
+                    });
+            });
+
+
+            services.AddAuthorization();
+
+            services.AddCors();
 
             /* Registrando Repositorys */
             services.AddScoped<ICategoryRepository, CategoryRepository>();

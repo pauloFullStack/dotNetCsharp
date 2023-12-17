@@ -1,5 +1,7 @@
 ﻿@using BlazorServer.Models
 @inject IdentityInformation _identity;
+@inject NavigationManager NavigationManager
+
 
 @* <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
@@ -23,12 +25,14 @@
     </Router>
 </CascadingAuthenticationState> *@
 
+@* Verificar quando o usuario não tiver mais os tokens, e redirecionar ele para login, e também quando estiver logado não permitir ir para pagina de login, e quando não estiver logado ir sempre para a pagina de login *@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+            @* <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" > *@
+            <AuthorizeRouteView RouteData="@routeData"  >
                 <NotAuthorized>
-                    <h1>Acesso Negado</h1>
+                    <BlazorServer.Pages.RedirectError />
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>

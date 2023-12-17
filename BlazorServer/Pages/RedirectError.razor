@@ -1,0 +1,24 @@
+﻿@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+
+@code {
+    private async Task<bool> IsUserAuthenticated()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        return authState.User.Identity?.IsAuthenticated ?? false;
+    }
+
+    private async Task RedirectRoute()
+    {
+        NavigationManager.NavigateTo("/Identity/Account/Login");
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!await IsUserAuthenticated())
+            await RedirectRoute();
+    }
+}

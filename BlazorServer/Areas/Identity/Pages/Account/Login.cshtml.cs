@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.NetworkInformation;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.JSInterop;
 
 namespace BlazorServer.Areas.Identity.Pages.Account
 {
@@ -15,11 +17,13 @@ namespace BlazorServer.Areas.Identity.Pages.Account
 
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IJSRuntime _js;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+        public LoginModel(SignInManager<IdentityUser> signInManager, IConfiguration configuration, IJSRuntime js)
         {
             _signInManager = signInManager;
-            _configuration = configuration; 
+            _configuration = configuration;
+            _js = js;
         }
 
         [BindProperty]
@@ -34,13 +38,13 @@ namespace BlazorServer.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
-            ReturnUrl = Url.Content("~/");
+            ReturnUrl = Url.Content("~/categories");
 
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, false, lockoutOnFailure: false);
                 if (result.Succeeded)
-                {                    
+                {
                     var authentication = GenerateToken(Input); // Gere o token JWT para o usuário autenticado
                     string token = authentication.Token;
 
@@ -62,6 +66,8 @@ namespace BlazorServer.Areas.Identity.Pages.Account
             return Page();
 
         }
+
+       
 
         private UserToken GenerateToken(InputModel userInformation)
         {

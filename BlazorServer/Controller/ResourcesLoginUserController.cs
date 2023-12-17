@@ -20,12 +20,18 @@ namespace BlazorServer.Controller
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ResourcesLoginUserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+        public ResourcesLoginUserController(
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -54,7 +60,8 @@ namespace BlazorServer.Controller
                 return BadRequest(result.Errors);
 
             await _signInManager.SignInAsync(user, false);
-            return Ok(GenerateToken(model));
+            //return Ok(GenerateToken(model));
+            return Ok();
 
         }
 
@@ -64,11 +71,19 @@ namespace BlazorServer.Controller
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
 
-            var result = await _signInManager.PasswordSignInAsync(userInformation.Email, userInformation.Password, isPersistent: false, lockoutOnFailure: false);
-
+            var result = await _signInManager.PasswordSignInAsync(userInformation.Email, userInformation.Password, false, lockoutOnFailure: false);
             if (result.Succeeded)
-            {                
-                return Ok(GenerateToken(userInformation));
+            {
+                var user = await _userManager.FindByEmailAsync(userInformation.Email);
+                await _signInManager.SignInAsync(user, isPersistent: true);
+                var httpContext = _httpContextAccessor.HttpContext;
+                var authenticationToken = httpContext.Request.Cookies[IdentityConstants.ApplicationScheme];
+
+                UserToken getDataAuthentication = GenerateToken(userInformation);
+                string token = getDataAuthentication.Token;
+                Response.Cookies.Append("accessToken", token);
+
+                return Ok();
             }
             else
             {
