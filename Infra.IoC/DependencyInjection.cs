@@ -1,24 +1,20 @@
 ﻿using Application.Interfaces;
 using Application.Mappings;
 using Application.Services;
-using Domain.Entities;
 using Domain.Interfaces;
 using Infra.Data.Context;
 using Infra.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using MySqlConnector;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Infra.IoC
 {
@@ -29,7 +25,8 @@ namespace Infra.IoC
             services.AddDbContextFactory<ApplicationDbContextObjects>(options => options.UseMySql(configuration.GetConnectionString("DefaultConnection"),
             new MySqlServerVersion(new Version(8, 0, 33)), b => b.MigrationsAssembly(typeof(ApplicationDbContextObjects).Assembly.FullName)));
 
-            services.AddDbContextFactory<ApplicationDbContext>(options => options.UseMySql(configuration.GetConnectionString("ConnectionUser"), ServerVersion.AutoDetect(configuration.GetConnectionString("ConnectionUser"))));
+            services.AddDbContextFactory<ApplicationDbContext>(options => options.UseMySql(configuration.GetConnectionString("ConnectionUser"), ServerVersion.AutoDetect(configuration.GetConnectionString("ConnectionUser"))));           
+
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -79,6 +76,7 @@ namespace Infra.IoC
             {
                 options.Cookie.Name = "tokenAspNet"; // Nome personalizado para o cookie
             });
+
 
             // Cors
             services.AddCors(options =>

@@ -30,17 +30,21 @@
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             @* <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" > *@
-            <AuthorizeRouteView RouteData="@routeData"  >
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
                     <BlazorServer.Pages.RedirectError />
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>
         <NotFound>
-            <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Pagina não encotrada, redicionar para o login se não estiver logado, se estiver redirecionar para pagina home.</p>
-            </LayoutView>
+            <AuthorizeView>
+                <Authorized>
+                    <BlazorServer.Pages.Index />
+                </Authorized>
+                <NotAuthorized>
+                    <BlazorServer.Pages.RedirectError />
+                </NotAuthorized>
+            </AuthorizeView>
         </NotFound>
     </Router>
 </CascadingAuthenticationState>

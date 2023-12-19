@@ -4,6 +4,8 @@ using Infra.IoC;
 using Microsoft.AspNetCore.Components;
 using BlazorServer.Utils;
 using BlazorServer.Models;
+using Microsoft.AspNetCore.Components.Routing;
+using BlazorServer.Pages;
 
 internal class Program
 {
@@ -11,7 +13,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // ADICIONAR TODOS ESSE SERVIÇOS CASO CRIE OUTRO PROJETO
         builder.Services.AddInfrastructure(builder.Configuration);
 
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -29,7 +31,10 @@ internal class Program
         /* Pega dados do contexto http, cookie, headers... */
         builder.Services.AddScoped<IdentityInformation>();
 
+        builder.Services.AddScoped<AuthenticationValidationService>();
+
         var app = builder.Build();
+        
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -55,6 +60,7 @@ internal class Program
 
         app.UseCors("AllowSpecificOrigin");
 
+        // Mideleware para ussar controller e api 
         app.MapControllers();
         app.MapBlazorHub();
         app.MapFallbackToPage("/_Host");
