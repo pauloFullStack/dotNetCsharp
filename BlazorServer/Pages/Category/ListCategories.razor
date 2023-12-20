@@ -113,7 +113,6 @@ else
         {
             await CarregaCategorias();
             _categoriasCarregadas = true;
-            await js.InvokeVoidAsync("localStorage.setItem", "accessToken", token);
         }
     }
 

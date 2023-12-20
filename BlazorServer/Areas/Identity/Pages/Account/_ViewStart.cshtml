@@ -1,5 +1,15 @@
-﻿@{
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@{
     Layout = "_IdentityLayout.cshtml";
+
+
+    if (User.Identity.IsAuthenticated)
+    {
+        Context.Response.Redirect("/");
+    }
+
 }
 
 

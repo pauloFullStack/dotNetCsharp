@@ -22,7 +22,8 @@ namespace BlazorServer.Controller
             _mapper = mapper;
         }
 
-        //Ver como autenticar api
+        // Atributo abaixo 'AllowAnonymous' Permite acesso a api, sem precisar de token
+        //[AllowAnonymous]
         [HttpGet("all")]
         public async Task<IEnumerable<CategoryDTO>> Get()
         {

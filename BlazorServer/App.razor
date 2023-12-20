@@ -1,6 +1,7 @@
 ﻿@using BlazorServer.Models
 @inject IdentityInformation _identity;
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 
 @* <CascadingAuthenticationState>
@@ -35,6 +36,7 @@
                     <BlazorServer.Pages.RedirectError />
                 </NotAuthorized>
             </AuthorizeRouteView>
+
         </Found>
         <NotFound>
             <AuthorizeView>
@@ -59,4 +61,22 @@
     //     _identity.UserName = InitialState?.UserName;
     //     _identity.IsAuthenticated = InitialState.IsAuthenticated;
     // }
+
+    private bool isUserAuthenticated;   
+
+    protected override async Task OnInitializedAsync()
+    {
+        var baseUri = new Uri(NavigationManager.BaseUri);
+        var absoluteUri = new Uri(NavigationManager.Uri);
+
+        var currentPath = absoluteUri.PathAndQuery.Substring(baseUri.PathAndQuery.Length);
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isUserAuthenticated = authState.User.Identity.IsAuthenticated;
+
+        // if (isUserAuthenticated)
+        //     NavigationManager.NavigateTo("/");
+        // NavigationManager
+    }
+
 }
