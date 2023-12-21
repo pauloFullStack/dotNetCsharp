@@ -6,7 +6,7 @@ using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
-namespace BlazorServer.Controller
+namespace Application.Apis
 {
     [Authorize(AuthenticationSchemes ="Bearer")]
     [Route("api/[controller]")]

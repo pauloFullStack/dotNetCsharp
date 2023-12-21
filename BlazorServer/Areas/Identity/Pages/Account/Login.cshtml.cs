@@ -1,4 +1,4 @@
-using BlazorServer.Models;
+using Application.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,6 +10,11 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.JSInterop;
 
+// ---- arrumar todo o codigo, começando por essa controller ver se eu uso algo nela , se não usar excluir ,
+// ---- arrumor onde registra os serviços e as injeções de dependencia colocar tudo do projeto de injeção de dependencia ,
+// ---- colocar os codigos em Application/Service... e organizar o codigo e a estrutura,
+// Criar o layout
+// acabar de fazer o crud de usuario, e depois o crud de permissões... ai dar mas uma gera e salvar esse projeto como meuFrameworkPadrao para criação de sistemas.. depois fazer um framework padrão para sites...ai começar fazer o sistema pra mim, e pesquisar como ganhar dinheiro na internet usando meus conheciemntos... criar uma segunda renda...
 namespace BlazorServer.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
@@ -69,7 +74,7 @@ namespace BlazorServer.Areas.Identity.Pages.Account
 
        
 
-        private UserToken GenerateToken(InputModel userInformation)
+        private UserTokenDTO GenerateToken(InputModel userInformation)
         {
             var claims = new[]
             {
@@ -100,7 +105,7 @@ namespace BlazorServer.Areas.Identity.Pages.Account
                 );
 
             // retorna os dados com o token e informacoes
-            return new UserToken()
+            return new UserTokenDTO()
             {
                 Authenticated = true,
                 Token = new JwtSecurityTokenHandler().WriteToken(token),

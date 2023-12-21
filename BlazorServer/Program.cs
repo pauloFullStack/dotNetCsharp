@@ -2,8 +2,6 @@
 //using BlazorServer.Data;
 using Infra.IoC;
 using Microsoft.AspNetCore.Components;
-using BlazorServer.Utils;
-using BlazorServer.Models;
 using Microsoft.AspNetCore.Components.Routing;
 using BlazorServer.Pages;
 
@@ -12,29 +10,13 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // ADICIONAR TODOS ESSE SERVIÇOS CASO CRIE OUTRO PROJETO
+        
         builder.Services.AddInfrastructure(builder.Configuration);
 
+        // Serviço que debuga os erro do EF Core
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-        builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor();
 
-        builder.Services.AddScoped(sp =>
-        {
-            var navigationManager = sp.GetRequiredService<NavigationManager>();
-            return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
-        });
-
-        /* Utils javascript */
-        builder.Services.AddScoped<UtilsJavaScript>();
-        /* Pega dados do contexto http, cookie, headers... */
-        builder.Services.AddScoped<IdentityInformation>();
-
-        builder.Services.AddScoped<AuthenticationValidationService>();
-
-        var app = builder.Build();
-        
+        var app = builder.Build();        
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

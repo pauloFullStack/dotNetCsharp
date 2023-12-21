@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BlazorServer.Controller
+namespace Application.Apis
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
@@ -16,7 +16,7 @@ namespace BlazorServer.Controller
     {
         private readonly IAspNetRolesService _aspNetRolesService;
         private readonly IMapper _mapper;
-        
+
         public AspNetRolesController(IAspNetRolesService aspNetRolesService, IMapper mapper)
         {
             _aspNetRolesService = aspNetRolesService;

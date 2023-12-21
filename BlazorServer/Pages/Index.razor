@@ -1,18 +1,4 @@
 ﻿@page "/"
 @attribute [Authorize]
-@* @inject IJSRuntime js *@
-
+<LoginDisplay />
 <h3>Home</h3>
-
-@* @code {
-    [Parameter]
-    public string? token { get; set; }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!string.IsNullOrEmpty(token))
-        {
-            await js.InvokeVoidAsync("localStorage.setItem", "accessToken", token);
-        }
-    }
-} *@

@@ -1,83 +1,91 @@
-﻿@page "/users"
-@attribute [Authorize]
-@inject HttpClient http
-@using Application.DTOs
-@inject IJSRuntime js
-@using System.Text.Json
+﻿<AuthorizeView Roles="Admin">
+    <Authorized>
 
-<h3>Users</h3>
+        @page "/users"
+        @attribute [Authorize]
+        @inject HttpClient http
+        @using Application.DTOs
+        @inject IJSRuntime js
+        @using System.Text.Json
 
-@if (_userDTO == null)
-{
-    <div id="erroCategory"><h4>Carregando...</h4></div>
-}
-else
-{
+        <h3>Users</h3>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>UserName</th>
-                <th>Editar</th>
-                <th>Deletar</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var userDTO in _userDTO)
-            {
-                <tr>
-                    <td>@userDTO.Id</td>
-                    <td>@userDTO.UserName</td>
-                    <td><a href="/addRoleUser/@userDTO.Id" class="btn btn-primary">Novo Perfil</a></td>
-                    <td><button class="btn btn-danger" @onclick="@(() => DeletarCategoria(userDTO.Id, userDTO.UserName))">Deletar</button></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-
-<ModalConfirma @ref="_confirma" onCancela="@CancelaConfirma" onConfirma="@DeleteConfirma">
-    <div>Deseja Realmente excluir o usuário <b><i>@NomeUser</i></b> ?</div>
-</ModalConfirma>
-
-@code {
-
-    private IEnumerable<UserDTO>? _userDTO { get; set; }
-    private ModalConfirma? _confirma;
-
-    private string? IdUser;
-    private string? NomeUser { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var httpResponse = await http.GetAsync($"api/user/all");
-
-        if (httpResponse.IsSuccessStatusCode)
+        @if (_userDTO == null)
         {
-            _userDTO = JsonSerializerGeneric<UserDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
+            <div id="erroCategory"><h4>Carregando...</h4></div>
         }
-    }
+        else
+        {
 
-    private void DeletarCategoria(Guid id, string nomeUser)
-    {
-        _confirma.Exibir();
-        IdUser = id.ToString();
-        NomeUser = nomeUser;
-    }
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>UserName</th>
+                        <th>Editar</th>
+                        <th>Deletar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var userDTO in _userDTO)
+                    {
+                        <tr>
+                            <td>@userDTO.Id</td>
+                            <td>@userDTO.UserName</td>
+                            <td><a href="/addRoleUser/@userDTO.Id" class="btn btn-primary">Novo Perfil</a></td>
+                            <td><button class="btn btn-danger" @onclick="@(() => DeletarCategoria(userDTO.Id, userDTO.UserName))">Deletar</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
 
-    private async Task CancelaConfirma()
-    {
-        _confirma.Ocultar();
-    }
 
-    private async Task DeleteConfirma()
-    {
-        await http.DeleteAsync($"api/user/{IdUser}");
-        _confirma.Ocultar();
-        _userDTO = _userDTO.Where(user => user.Id != Guid.Parse(IdUser)).ToList();
+        <ModalConfirma @ref="_confirma" onCancela="@CancelaConfirma" onConfirma="@DeleteConfirma">
+            <div>Deseja Realmente excluir o usuário <b><i>@NomeUser</i></b> ?</div>
+        </ModalConfirma>
 
-    }
+        @code {
 
-}
+        private IEnumerable<UserDTO>? _userDTO { get; set; }
+        private ModalConfirma? _confirma;
+
+        private string? IdUser;
+        private string? NomeUser { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            var httpResponse = await http.GetAsync($"api/user/all");
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                _userDTO = JsonSerializerGeneric<UserDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
+            }
+        }
+
+        private void DeletarCategoria(Guid id, string nomeUser)
+        {
+            _confirma.Exibir();
+            IdUser = id.ToString();
+            NomeUser = nomeUser;
+        }
+
+        private async Task CancelaConfirma()
+        {
+            _confirma.Ocultar();
+        }
+
+        private async Task DeleteConfirma()
+        {
+            await http.DeleteAsync($"api/user/{IdUser}");
+            _confirma.Ocultar();
+            _userDTO = _userDTO.Where(user => user.Id != Guid.Parse(IdUser)).ToList();
+
+        }
+
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Index />
+    </NotAuthorized>
+</AuthorizeView>

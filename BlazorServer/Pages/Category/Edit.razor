@@ -1,33 +1,41 @@
-﻿@page "/category/{id:int}/edit/"
-@attribute [Authorize]
-@inject HttpClient http
-@inject NavigationManager navigation
-@inject UtilsJavaScript js
+﻿<AuthorizeView Roles="Admin,User">
+    <Authorized>
 
-<h3>Editar Categoria</h3>
+        @page "/category/{id:int}/edit/"
+        @attribute [Authorize]
+        @inject HttpClient http
+        @inject NavigationManager navigation
+        @inject JavaScriptService js
 
-<CategoryForm CategoryDTO="@categoria" OnValidSubmit="@EditarCategoria" />
+        <h3>Editar Categoria</h3>
 
-@code {
+        <CategoryForm CategoryDTO="@categoria" OnValidSubmit="@EditarCategoria" />
 
-    [Parameter]
-    public int id { get; set; }
+        @code {
 
-    CategoryDTO categoria = new CategoryDTO();
+        [Parameter]
+        public int id { get; set; }
 
-    /* OnParametersSetAsync é outro método do ciclo de vida em páginas Razor no ASP.NET Core.
-     * Assim como o OnInitializedAsync, ele lida com a inicialização da página, mas é específico para a
-     * atualização de parâmetros. */
-    protected async override Task OnParametersSetAsync()
-    {
-        categoria = await http.GetFromJsonAsync<CategoryDTO>($"api/category/{id}");
-    }
+        CategoryDTO categoria = new CategoryDTO();
 
-    private async Task EditarCategoria()
-    {
-        await http.PutAsJsonAsync("api/category", categoria);
-        navigation.NavigateTo("categories");
-    }
+        /* OnParametersSetAsync é outro método do ciclo de vida em páginas Razor no ASP.NET Core.
+        * Assim como o OnInitializedAsync, ele lida com a inicialização da página, mas é específico para a
+        * atualização de parâmetros. */
+        protected async override Task OnParametersSetAsync()
+        {
+            categoria = await http.GetFromJsonAsync<CategoryDTO>($"api/category/{id}");
+        }
+
+        private async Task EditarCategoria()
+        {
+            await http.PutAsJsonAsync("api/category", categoria);
+            navigation.NavigateTo("categories");
+        }
 
 
-}
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Index />
+    </NotAuthorized>
+</AuthorizeView>

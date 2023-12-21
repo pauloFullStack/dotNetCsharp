@@ -6,32 +6,6 @@
     ViewData["Title"] = "Login";
 }
 
-@* <h1>@ViewData["Title"]</h1>
-<div class="row" style="margin:50px">
-    <div class="col-md-4">
-        <section>
-            <form id="account" method="post">
-                <h2>Use a local account to log in.</h2>
-                <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-floating" style="margin:10px">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                    <label asp-for="Input.Email" class="form-control"></label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-                <div class="form-floating" style="margin:10px">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
-                    <label asp-for="Input.Password" class="form-control"></label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div style="margin:10px">
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-                </div>
-            </form>
-        </section>
-    </div>
-</div> *@
-
 
 <div class="container">
     <div class="row align-items-center justify-content-center" style="height: 70vh;">
@@ -64,35 +38,3 @@
         </div>
     </div>
 </div>
-
-
-<script>
-
-    // document.getElementById('account').addEventListener('submit', function (event) {
-    //     event.preventDefault(); // Evita o comportamento padrão do formulário (envio tradicional)
-
-    //     let formData = new FormData(this); // Obtém os dados do formulário
-
-    //     fetch('https://localhost:7210/Identity/Account/Login', {
-    //         method: 'POST',
-    //         body: formData
-    //     })
-    //         .then(response => {
-    //             // Tratar a resposta da requisição, se necessário
-    //             console.log('Requisição enviada com sucesso!', response);
-    //             if (response.redirected)
-    //                 window.location = response.url;
-
-    //             // window.location.href = '/categories';
-    //         })
-    //         .catch(error => {
-    //             // Tratar possíveis erros de requisição
-    //             console.error('Erro ao enviar requisição:', error);
-    //         });
-    // });
-
-
-    function teste() {
-        alert('Teste');
-    }
-</script>

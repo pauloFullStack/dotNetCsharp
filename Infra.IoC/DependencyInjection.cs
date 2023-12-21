@@ -6,6 +6,7 @@ using Infra.Data.Context;
 using Infra.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Identity;
@@ -32,24 +33,6 @@ namespace Infra.IoC
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            //services.AddIdentity<IdentityUser, IdentityRole>(options =>
-            //{
-            //    options.Password.RequireDigit = false;
-            //    options.Password.RequiredLength = 5;
-            //    options.Password.RequireLowercase = false;
-            //    options.Password.RequireUppercase = false;
-            //    options.Password.RequireNonAlphanumeric = false;
-            //    options.SignIn.RequireConfirmedAccount = false;
-
-            //}).AddEntityFrameworkStores<ApplicationDbContext>();
-
-            // JWT
-            // Adiciona o manipulador de autenticação e define o 
-            // esquema de autenticação usado : Bearer
-            // valida o emissor, a audiencia e a chave 
-            // usando a chave secreta valida a assinatura
-
-
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -64,13 +47,6 @@ namespace Infra.IoC
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:key"]))
                     }
                 );
-
-            //services.ConfigureApplicationCookie(options =>
-            //{
-            //    options.Cookie.Name = "tokenAspNet"; // Nome personalizado para o cookie
-            //    //options.LoginPath = "/login"; // redireciona
-
-            //});
 
             services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, options =>
             {
@@ -107,12 +83,24 @@ namespace Infra.IoC
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAspNetRolesService, AspNetRolesService>();
 
+            /* Chamando Metodos Javascripts */
+            services.AddScoped<JavaScriptService>();
+
             /* Registrando Mapeamento de Entidades para objetos de transferência DTOs */
             services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
 
             /* Registrando Handlers */
             var myHandlers = AppDomain.CurrentDomain.Load("Application");
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(myHandlers));
+            
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
+
+            services.AddScoped(sp =>
+            {
+                var navigationManager = sp.GetRequiredService<NavigationManager>();
+                return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
+            });
 
             return services;
         }

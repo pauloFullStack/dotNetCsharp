@@ -1,28 +1,37 @@
-﻿@page "/category/create"
-@attribute [Authorize]
-@inject HttpClient http
-@inject NavigationManager navigation
-@inject UtilsJavaScript js
+﻿<AuthorizeView Roles="Admin,User">
+    <Authorized>
 
-<h2>Nova Categoria</h2>
+        @page "/category/create"
+        @attribute [Authorize]
+        @inject HttpClient http
+        @inject NavigationManager navigation
+        @inject JavaScriptService js
 
-<CategoryForm CategoryDTO="@categoria" OnValidSubmit="@CriarCategoria" />
+        <h2>Nova Categoria</h2>
 
-@code {
+        <CategoryForm CategoryDTO="@categoria" OnValidSubmit="@CriarCategoria" />
 
-    CategoryDTO categoria = new CategoryDTO();
+        @code {
 
-    /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await js.FocusById("txtCategoriaNome");
-    }
+        CategoryDTO categoria = new CategoryDTO();
 
 
-    private async Task CriarCategoria()
-    {
-        await http.PostAsJsonAsync("api/category", categoria);
-        navigation.NavigateTo("categories");
-    }
-}
+        /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
+        protected async override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+                await js.FocusById("txtCategoriaNome");
+        }
+
+
+        private async Task CriarCategoria()
+        {
+            await http.PostAsJsonAsync("api/category", categoria);
+            navigation.NavigateTo("categories");
+        }
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Index />
+    </NotAuthorized>
+</AuthorizeView>

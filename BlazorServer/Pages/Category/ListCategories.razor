@@ -1,202 +1,208 @@
-﻿@page "/categories"
+﻿<AuthorizeView Roles="Admin,User">
+    <Authorized>
+        @page "/categories"
+        @attribute [Authorize]
+        @inject HttpClient http
+        @using Application.DTOs
+        @inject IJSRuntime js
+        @using System.Text.Json
+        @using System.Net.Http;
+        @using System.Net.Http.Headers;
+        @using System.Security.Claims
+        @inject AuthenticationStateProvider AuthenticationStateProvider
 
-@attribute [Authorize]
-@inject HttpClient http
-@using Application.DTOs
-@inject IJSRuntime js
-@using System.Text.Json
-@using System.Net.Http;
-@using System.Net.Http.Headers;
-@using System.Security.Claims
-@inject AuthenticationStateProvider AuthenticationStateProvider
+        <BlazorServer.Pages.CheckUserStatus />
 
-<BlazorServer.Pages.CheckUserStatus />
-
-@if (_categorias == null)
-{
-    <div id="erroCategory"><h4>Carregando...</h4></div>
-}
-else if (!_categorias.Any())
-{
-    <h4>Nenhum categoria encontrada</h4>
-}
-else
-{
-
-    <div style="padding:15px 0">
-        <div class="row">
-            <div class="col-lg-9 col-sm-12">
-                <input type="text" class="form-control mb-2 mr-sm-2" @bind="nomeFiltro" placeholder="Filtrar pelo nome" />
-            </div>
-
-            <div class="col-lg-3 col-sm-12">
-                <div style="display:flex;align-items:center;justify-content:flex-start;width:100%;padding:0 0 0 10px">
-                    <div>
-                        <button style="width:100%" type="button" class="btn btn-primary mr-sm-2 mb-2" @onclick="Filtrar">
-                            Filtrar
-                        </button>
-                    </div>
-
-                    <div style="padding: 0 0 0 10px">
-                        <button style="width:100%" type="button" class="btn btn-outline-dark mb-2" @onclick="LimparFiltro">
-                            Limpar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="margin-bottom:10px">
-        <a class="btn btn-outline-success" href="category/create">Criar cate</a>
-    </div>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Descrição</th>
-                <th>Editar</th>
-                <th>Deletar</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var categoria in _categorias)
-            {
-                <tr>
-                    <td>@categoria.Id</td>
-                    <td>@categoria.Name</td>
-                    <td><a href="category/@categoria.Id/edit/" class="btn btn-primary">Editar</a></td>
-                    <td><button @onclick="@(() => DeletarCategoria(categoria.Id, categoria.Name))" class="btn btn-danger">Deletar</button></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-
-<ModalConfirma @ref="confirma" onCancela="@CancelaConfirma" onConfirma="@DeleteConfirma">
-    <div>Deseja Realmente excluir a Categoria <b><i>@NomeCategoria</i></b> ?</div>
-</ModalConfirma>
-
-@if (showPagination)
-{
-    <Pagination QuantidadeTotalPaginas="@QuantidadeTotalPaginas"
-                paginaAtual="@paginaAtual"
-                Raio="2"
-                PaginaSelecionadaCallBack="PaginaSelecionadaCallBack">
-    </Pagination>
-}
-
-@code {
-
-    [Parameter]
-    public string? token { get; set; }
-
-    private IEnumerable<CategoryDTO>? _categorias { get; set; }
-    private bool _categoriasCarregadas = false;
-    private int IdCategoria;
-
-    private ModalConfirma? confirma;
-    private bool showPagination;
-    private int QuantidadeTotalPaginas { get; set; }
-    private int TotalCategoriasPorPaginas { get; set; }
-    private int paginaAtual = 1;
-    private string? NomeCategoria { get; set; }
-
-    private string nomeFiltro = string.Empty;
-
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!_categoriasCarregadas)
+        @if (_categorias == null)
         {
-            await CarregaCategorias();
-            _categoriasCarregadas = true;
+            <div id="erroCategory"><h4>Carregando...</h4></div>
         }
-    }
-
-    private async Task CarregaCategorias(int pagina = 1, int quantidadePorPagina = 5)
-    {
-        try
+        else if (!_categorias.Any())
         {
-
-            // string token = await js.InvokeAsync<string>("localStorage.getItem", "accessToken");
-            string token = await js.InvokeAsync<string>("getCookie", "accessToken");
-
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var httpResponse = await http.GetAsync($"api/category?pagina={pagina}&quantidadePorPagina={quantidadePorPagina}&nomeFiltro={nomeFiltro}");
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                QuantidadeTotalPaginas = int.Parse(httpResponse.Headers.GetValues("totalPaginas").FirstOrDefault());
-                var responseString = await httpResponse.Content.ReadAsStringAsync();
-
-                _categorias = JsonSerializerGeneric<CategoryDTO>.ReturnList(responseString);
-
-                // Pego a quantidade de categorias que veio em cada pagina
-                TotalCategoriasPorPaginas = _categorias.Count();
-
-                if (int.Parse(httpResponse.Headers.GetValues("quantidadeRegistroTotal").FirstOrDefault()) > quantidadePorPagina)
-                    showPagination = true;
-                else
-                    showPagination = false;
-
-                StateHasChanged();
-            }
-        }
-        catch (Exception ex)
-        {
-            await js.InvokeVoidAsync("showErroCategory", "erroCategory", "Erro category teste");
-        }
-
-    }
-
-    private async Task CancelaConfirma()
-    {
-        confirma.Ocultar();
-    }
-
-    private async Task DeleteConfirma()
-    {
-        await http.DeleteAsync($"api/category/{IdCategoria}");
-        confirma.Ocultar();
-
-        if (TotalCategoriasPorPaginas == 1 && paginaAtual > 1)
-        {
-            await CarregaCategorias(--paginaAtual);
+            <h4>Nenhum categoria encontrada</h4>
         }
         else
         {
-            await CarregaCategorias(paginaAtual);
+
+            <div style="padding:15px 0">
+                <div class="row">
+                    <div class="col-lg-9 col-sm-12">
+                        <input type="text" class="form-control mb-2 mr-sm-2" @bind="nomeFiltro" placeholder="Filtrar pelo nome" />
+                    </div>
+
+                    <div class="col-lg-3 col-sm-12">
+                        <div style="display:flex;align-items:center;justify-content:flex-start;width:100%;padding:0 0 0 10px">
+                            <div>
+                                <button style="width:100%" type="button" class="btn btn-primary mr-sm-2 mb-2" @onclick="Filtrar">
+                                    Filtrar
+                                </button>
+                            </div>
+
+                            <div style="padding: 0 0 0 10px">
+                                <button style="width:100%" type="button" class="btn btn-outline-dark mb-2" @onclick="LimparFiltro">
+                                    Limpar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:10px">
+                <a class="btn btn-outline-success" href="category/create">Criar cate</a>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Descrição</th>
+                        <th>Editar</th>
+                        <th>Deletar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var categoria in _categorias)
+                    {
+                        <tr>
+                            <td>@categoria.Id</td>
+                            <td>@categoria.Name</td>
+                            <td><a href="category/@categoria.Id/edit/" class="btn btn-primary">Editar</a></td>
+                            <td><button @onclick="@(() => DeletarCategoria(categoria.Id, categoria.Name))" class="btn btn-danger">Deletar</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
 
-    }
 
-    private void DeletarCategoria(int id, string nomeCategoria)
-    {
-        confirma.Exibir();
-        IdCategoria = id;
-        NomeCategoria = nomeCategoria;
-    }
+        <ModalConfirma @ref="confirma" onCancela="@CancelaConfirma" onConfirma="@DeleteConfirma">
+            <div>Deseja Realmente excluir a Categoria <b><i>@NomeCategoria</i></b> ?</div>
+        </ModalConfirma>
 
-    private async Task PaginaSelecionadaCallBack(int pagina)
-    {
-        paginaAtual = pagina;
-        await CarregaCategorias(pagina);
-    }
+        @if (showPagination)
+        {
+            <Pagination QuantidadeTotalPaginas="@QuantidadeTotalPaginas"
+                        paginaAtual="@paginaAtual"
+                        Raio="2"
+                        PaginaSelecionadaCallBack="PaginaSelecionadaCallBack">
+            </Pagination>
+        }
 
-    private async Task Filtrar()
-    {
-        paginaAtual = 1;
-        await CarregaCategorias();
-    }
+        @code {
 
-    private async Task LimparFiltro()
-    {
-        nomeFiltro = string.Empty;
-        paginaAtual = 1;
-        await CarregaCategorias();
-    }
+        [Parameter]
+        public string? token { get; set; }
 
-}
+        private IEnumerable<CategoryDTO>? _categorias { get; set; }
+        private bool _categoriasCarregadas = false;
+        private int IdCategoria;
+
+        private ModalConfirma? confirma;
+        private bool showPagination;
+        private int QuantidadeTotalPaginas { get; set; }
+        private int TotalCategoriasPorPaginas { get; set; }
+        private int paginaAtual = 1;
+        private string? NomeCategoria { get; set; }
+
+        private string nomeFiltro = string.Empty;
+
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (!_categoriasCarregadas)
+            {
+                await CarregaCategorias();
+                _categoriasCarregadas = true;
+            }
+        }
+
+        private async Task CarregaCategorias(int pagina = 1, int quantidadePorPagina = 5)
+        {
+            try
+            {
+
+                // string token = await js.InvokeAsync<string>("localStorage.getItem", "accessToken");
+                string token = await js.InvokeAsync<string>("getCookie", "accessToken");
+
+                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var httpResponse = await http.GetAsync($"api/category?pagina={pagina}&quantidadePorPagina={quantidadePorPagina}&nomeFiltro={nomeFiltro}");
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    QuantidadeTotalPaginas = int.Parse(httpResponse.Headers.GetValues("totalPaginas").FirstOrDefault());
+                    var responseString = await httpResponse.Content.ReadAsStringAsync();
+
+                    _categorias = JsonSerializerGeneric<CategoryDTO>.ReturnList(responseString);
+
+                    // Pego a quantidade de categorias que veio em cada pagina
+                    TotalCategoriasPorPaginas = _categorias.Count();
+
+                    if (int.Parse(httpResponse.Headers.GetValues("quantidadeRegistroTotal").FirstOrDefault()) > quantidadePorPagina)
+                        showPagination = true;
+                    else
+                        showPagination = false;
+
+                    StateHasChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                await js.InvokeVoidAsync("showErroCategory", "erroCategory", "Erro category teste");
+            }
+
+        }
+
+        private async Task CancelaConfirma()
+        {
+            confirma.Ocultar();
+        }
+
+        private async Task DeleteConfirma()
+        {
+            await http.DeleteAsync($"api/category/{IdCategoria}");
+            confirma.Ocultar();
+
+            if (TotalCategoriasPorPaginas == 1 && paginaAtual > 1)
+            {
+                await CarregaCategorias(--paginaAtual);
+            }
+            else
+            {
+                await CarregaCategorias(paginaAtual);
+            }
+
+        }
+
+        private void DeletarCategoria(int id, string nomeCategoria)
+        {
+            confirma.Exibir();
+            IdCategoria = id;
+            NomeCategoria = nomeCategoria;
+        }
+
+        private async Task PaginaSelecionadaCallBack(int pagina)
+        {
+            paginaAtual = pagina;
+            await CarregaCategorias(pagina);
+        }
+
+        private async Task Filtrar()
+        {
+            paginaAtual = 1;
+            await CarregaCategorias();
+        }
+
+        private async Task LimparFiltro()
+        {
+            nomeFiltro = string.Empty;
+            paginaAtual = 1;
+            await CarregaCategorias();
+        }
+
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Index />
+    </NotAuthorized>
+</AuthorizeView>

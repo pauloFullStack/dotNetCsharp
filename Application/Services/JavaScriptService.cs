@@ -1,12 +1,16 @@
-﻿using Microsoft.JSInterop;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.JSInterop;
 
-namespace BlazorServer.Utils
+namespace Application.Services
 {
-    public class UtilsJavaScript
+    public class JavaScriptService
     {
         private readonly IJSRuntime _jsRuntime;
 
-        public UtilsJavaScript(IJSRuntime jsRuntime)
+        public JavaScriptService(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;
         }

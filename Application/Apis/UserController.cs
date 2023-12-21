@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-namespace BlazorServer.Controller
+namespace Application.Apis
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]

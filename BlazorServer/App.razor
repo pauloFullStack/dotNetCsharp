@@ -1,45 +1,19 @@
-﻿@using BlazorServer.Models
-@inject IdentityInformation _identity;
-@inject NavigationManager NavigationManager
+﻿@inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 
-@* <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly">
-        <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData">
-                <NotAuthorized>
-                    <BlazorServer.Pages.Login.Index />
-                </NotAuthorized>
-            </AuthorizeRouteView>
-        </Found>
-        <NotFound>
-            <AuthorizeView>
-                <Authorized>
-                    <BlazorServer.Pages.Index />
-                </Authorized>
-                <NotAuthorized>
-                    <BlazorServer.Pages.Login.Index />
-                </NotAuthorized>
-            </AuthorizeView>
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState> *@
-
-@* Verificar quando o usuario não tiver mais os tokens, e redirecionar ele para login, e também quando estiver logado não permitir ir para pagina de login, e quando não estiver logado ir sempre para a pagina de login *@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             @* <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" > *@
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <AuthorizeRouteView RouteData="@routeData">
                 <NotAuthorized>
                     <BlazorServer.Pages.RedirectError />
                 </NotAuthorized>
             </AuthorizeRouteView>
-
         </Found>
         <NotFound>
-            <AuthorizeView>
+            <AuthorizeView >
                 <Authorized>
                     <BlazorServer.Pages.Index />
                 </Authorized>
@@ -51,32 +25,3 @@
     </Router>
 </CascadingAuthenticationState>
 
-@code {
-
-    // [Parameter]
-    // public InitialApplicationState? InitialState { get; set; }
-
-    // protected override void OnInitialized()
-    // {
-    //     _identity.UserName = InitialState?.UserName;
-    //     _identity.IsAuthenticated = InitialState.IsAuthenticated;
-    // }
-
-    private bool isUserAuthenticated;   
-
-    protected override async Task OnInitializedAsync()
-    {
-        var baseUri = new Uri(NavigationManager.BaseUri);
-        var absoluteUri = new Uri(NavigationManager.Uri);
-
-        var currentPath = absoluteUri.PathAndQuery.Substring(baseUri.PathAndQuery.Length);
-
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        isUserAuthenticated = authState.User.Identity.IsAuthenticated;
-
-        // if (isUserAuthenticated)
-        //     NavigationManager.NavigateTo("/");
-        // NavigationManager
-    }
-
-}
