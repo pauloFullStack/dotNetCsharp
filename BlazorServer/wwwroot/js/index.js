@@ -134,3 +134,7 @@ function login(email, password) {
 function teste() {
     alert('Teste');
 }
+
+function redirectRoute(route) {
+    window.location.href = route;
+} 

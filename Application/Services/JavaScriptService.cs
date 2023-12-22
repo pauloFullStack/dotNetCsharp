@@ -29,5 +29,10 @@ namespace Application.Services
         {
             await _jsRuntime.InvokeVoidAsync("clearBorderAndNotification");
         }
+
+        public async Task RedirectRoute(string route)
+        {
+            await _jsRuntime.InvokeVoidAsync("redirectRoute", route);
+        }
     }
 }

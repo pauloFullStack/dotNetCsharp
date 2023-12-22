@@ -1,0 +1,78 @@
+﻿@inject NavigationManager Navigation
+@inject IJSRuntime js
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin:1rem;border-bottom: .1rem solid #000">
+    <div>
+        <h1>Framework Default</h1>
+    </div>
+    <div style="margin-bottom:15px">
+        <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+            </svg>
+        </a>
+    </div>
+</div>
+
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Crud</h5>
+        <a href="#" data-bs-dismiss="offcanvas" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+            </svg>
+        </a>
+    </div>
+    <div class="offcanvas-body">
+        <div>
+            <NavLink data-bs-dismiss="offcanvas" href="#" @onclick="@(() => CloseMenuSide())" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <AuthorizeView Roles="Admin,User">
+            <Authorized>
+                <div>
+                    <NavLink data-bs-dismiss="offcanvas" href="#" @onclick="@(() => CloseMenuSide("categories"))">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Categorias
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <div>
+                    <NavLink data-bs-dismiss="offcanvas" href="#" @onclick="@(() => CloseMenuSide("users"))">
+                        <span class="oi oi-person" aria-hidden="true"></span> Usuários
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin,User">
+            <Authorized>
+                <div>
+                    <a href="Identity/Account/Logout">
+                        <span class="oi oi-person" aria-hidden="true"></span> Sair
+                    </a>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+    </div>
+</div>
+
+
+@code {
+
+
+    private void Redirect()
+    {
+        js.InvokeVoidAsync("closeOffcanvas");
+        Navigation.NavigateTo("/");
+    }
+
+    private void CloseMenuSide(string route = "")
+    {
+        Navigation.NavigateTo(route != "" ? $"/{route}" : "/");
+    }
+
+}

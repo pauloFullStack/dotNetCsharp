@@ -5,8 +5,8 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            @* <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" > *@
-            <AuthorizeRouteView RouteData="@routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+            @* <AuthorizeRouteView RouteData="@routeData"> *@
                 <NotAuthorized>
                     <BlazorServer.Pages.RedirectError />
                 </NotAuthorized>
@@ -15,7 +15,7 @@
         <NotFound>
             <AuthorizeView >
                 <Authorized>
-                    <BlazorServer.Pages.Index />
+                    <BlazorServer.Pages.Index isRedirect=true />
                 </Authorized>
                 <NotAuthorized>
                     <BlazorServer.Pages.RedirectError />
