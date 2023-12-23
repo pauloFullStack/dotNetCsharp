@@ -1,4 +1,5 @@
 ﻿using Domain.Validation;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,5 +39,8 @@ namespace Domain.Entities
             DomainExceptionValidation.When(name.Length < 3, "Nome inválido, no minimo 3 caracteres");
             Name = name;
         }
+
+        public string UserId { get; set; }
+        public IdentityUser IdentityUser { get; set; }
     }
 }

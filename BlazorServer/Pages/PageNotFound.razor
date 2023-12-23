@@ -1,0 +1,24 @@
+﻿@attribute [Authorize]
+@inject JavaScriptService js
+
+@if (isRedirect)
+{
+    <h3>Carregando...</h3>
+}
+
+@code {
+
+    [Parameter]
+    public bool isRedirect { get; set; } = false;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (isRedirect)
+        {
+            await js.RedirectRoute("/");
+        }
+
+    }
+
+}

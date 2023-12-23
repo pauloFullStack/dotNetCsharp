@@ -102,6 +102,7 @@ namespace Infra.IoC
                 return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) };
             });
 
+
             return services;
         }
     }

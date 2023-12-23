@@ -1,29 +1,6 @@
 ﻿@page "/"
 @attribute [Authorize]
-@inject JavaScriptService js
-
-@if (isRedirect)
-{
-    <h3>Carregando...</h3>
-}
-else
-{
-    <h3>Home</h3>
-}
-
-@* Fazer uma componente de redirecionar a pagina *@
-@code {
-    [Parameter]
-    public bool isRedirect { get; set; } = false;
 
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (isRedirect)
-        {
-            await js.RedirectRoute("/");
-        }
+<h3>Home</h3>
 
-    }
-
-}

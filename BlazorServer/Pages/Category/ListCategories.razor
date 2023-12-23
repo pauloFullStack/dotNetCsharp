@@ -11,7 +11,6 @@
         @using System.Security.Claims
         @inject AuthenticationStateProvider AuthenticationStateProvider
 
-        <BlazorServer.Pages.CheckUserStatus />
 
         @if (_categorias == null)
         {
@@ -52,33 +51,35 @@
                 <a class="btn btn-outline-success" href="category/create">Criar cate</a>
             </div>
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Descrição</th>
-                        <th>Editar</th>
-                        <th>Deletar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var categoria in _categorias)
-                    {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>@categoria.Id</td>
-                            <td>@categoria.Name</td>
-                            <td><a href="category/@categoria.Id/edit/" class="btn btn-primary">Editar</a></td>
-                            <td><button @onclick="@(() => DeletarCategoria(categoria.Id, categoria.Name))" class="btn btn-danger">Deletar</button></td>
+                            <th>Id</th>
+                            <th>Descrição</th>
+                            <th>Editar</th>
+                            <th>Deletar</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var categoria in _categorias)
+                        {
+                            <tr>
+                                <td>@categoria.Id</td>
+                                <td>@categoria.Name</td>
+                                <td><a href="category/@categoria.Id/edit/" class="btn btn-primary">Editar</a></td>
+                                <td><button @onclick="@(() => DeletarCategoria(categoria.Id, categoria.Name))" class="btn btn-danger">Deletar</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         }
 
 
-        <ModalConfirma @ref="confirma" onCancela="@CancelaConfirma" onConfirma="@DeleteConfirma">
+        <Confirma @ref="confirma" onCancela="@CancelaConfirma" onConfirma="@DeleteConfirma">
             <div>Deseja Realmente excluir a Categoria <b><i>@NomeCategoria</i></b> ?</div>
-        </ModalConfirma>
+        </Confirma>
 
         @if (showPagination)
         {
@@ -98,7 +99,7 @@
         private bool _categoriasCarregadas = false;
         private int IdCategoria;
 
-        private ModalConfirma? confirma;
+        private Confirma? confirma;
         private bool showPagination;
         private int QuantidadeTotalPaginas { get; set; }
         private int TotalCategoriasPorPaginas { get; set; }
