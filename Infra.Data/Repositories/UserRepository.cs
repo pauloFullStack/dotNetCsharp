@@ -12,9 +12,11 @@ namespace Infra.Data.Repositories
     public class UserRepository : IUserRepository
     {
         IDbContextFactory<ApplicationDbContext> _userContext;
-        public UserRepository(IDbContextFactory<ApplicationDbContext> context)
+        private readonly UserManager<IdentityUser> _userManager;
+        public UserRepository(IDbContextFactory<ApplicationDbContext> context, UserManager<IdentityUser> userManager)
         {
             _userContext = context;
+            _userManager = userManager; 
         }
         private async Task<ApplicationDbContext> CreateDbContextAsync()
         {
@@ -31,6 +33,28 @@ namespace Infra.Data.Repositories
         {
             using var context = await CreateDbContextAsync();
             return await context.Users.FindAsync(id);
+        }
+
+        public async Task<IdentityUser> GetUserNameAsync(string userName)
+        {
+            using var context = await CreateDbContextAsync();
+            return await context.Users.FirstOrDefaultAsync(field => field.UserName == userName);
+        }
+
+        public async Task<ActionResult<IdentityUser>> CreateAsync(string email, string password)
+        {
+            try
+            {
+                using var context = await CreateDbContextAsync();
+
+                var newUser = new IdentityUser { UserName = email, Email = email };
+                var result = await _userManager.CreateAsync(newUser, password);
+                return newUser;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<bool> DeleteUserAsync(string id)
@@ -60,5 +84,6 @@ namespace Infra.Data.Repositories
             return true;
 
         }
+        
     }
 }

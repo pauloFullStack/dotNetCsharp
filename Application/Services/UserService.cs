@@ -19,6 +19,11 @@ namespace Application.Services
             _mapper = mapper;
         }
 
+        public async Task<ActionResult<UserDTO>> AddAsync(UserDTO userDTO)
+        {            
+            return _mapper.Map<UserDTO>(await _userRepository.CreateAsync(userDTO.Email, userDTO.Password));
+        }
+
         public async Task<IEnumerable<UserDTO>> GetUsersAsync()
         {
             var userEntity = await _userRepository.GetUsersAsync();
@@ -28,6 +33,12 @@ namespace Application.Services
         public async Task<UserDTO> GetUserAsync(string id)
         {
             var userEntity = await _userRepository.GetUserAsync(id);
+            return _mapper.Map<UserDTO>(userEntity);
+        }
+
+        public async Task<UserDTO> GetUserNameAsync(string userName)
+        {
+            var userEntity = await _userRepository.GetUserNameAsync(userName);
             return _mapper.Map<UserDTO>(userEntity);
         }
 
@@ -42,5 +53,6 @@ namespace Application.Services
             var userEntity = await _userRepository.DeleteUserAsync(id);
             return true;
         }
+
     }
 }

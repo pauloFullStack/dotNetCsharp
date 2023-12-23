@@ -39,7 +39,7 @@
                 </div>
             </Authorized>
         </AuthorizeView>
-        <AuthorizeView Roles="Admin">
+        <AuthorizeView Roles="User">
             <Authorized>
                 <div>
                     <NavLink data-bs-dismiss="offcanvas" href="#" @onclick="@(() => CloseMenuSide("users"))">
@@ -48,7 +48,16 @@
                 </div>
             </Authorized>
         </AuthorizeView>
-        <AuthorizeView Roles="Admin,User">
+        <AuthorizeView>
+            <Authorized>
+                <div>
+                    <NavLink data-bs-dismiss="offcanvas" href="#" @onclick="@(() => CloseMenuSide("listRoles"))">
+                        <span class="oi oi-person" aria-hidden="true"></span> Permissões
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView>
             <Authorized>
                 <div>
                     <a href="Identity/Account/Logout">

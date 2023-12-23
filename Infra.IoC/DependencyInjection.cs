@@ -23,8 +23,8 @@ namespace Infra.IoC
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContextFactory<ApplicationDbContextObjects>(options => options.UseMySql(configuration.GetConnectionString("DefaultConnection"),
-            new MySqlServerVersion(new Version(8, 0, 33)), b => b.MigrationsAssembly(typeof(ApplicationDbContextObjects).Assembly.FullName)));
+            //services.AddDbContextFactory<ApplicationDbContextObjects>(options => options.UseMySql(configuration.GetConnectionString("DefaultConnection"),
+            //new MySqlServerVersion(new Version(8, 0, 33)), b => b.MigrationsAssembly(typeof(ApplicationDbContextObjects).Assembly.FullName)));
 
             services.AddDbContextFactory<ApplicationDbContext>(options => options.UseMySql(configuration.GetConnectionString("ConnectionUser"), ServerVersion.AutoDetect(configuration.GetConnectionString("ConnectionUser"))));           
 

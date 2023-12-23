@@ -31,10 +31,17 @@
                     </div>
                 </form>
                 <div class="text-center pt-3">
-                    <a class="btn btn-link" style="font-size:12px;width:100%;padding-bottom:0">Registrar</a>
+                    <button href="Identity/Account/Register" onclick="redirectRegister()" class="btn btn-link" style="font-size:12px;width:100%;padding-bottom:0">Registrar</button>
                     <a class="btn btn-link" style="font-size:12px;width:100%">Esqueceu a senha?</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    function redirectRegister(){
+        window.location.href = '/Identity/Account/Register';
+    }
+</script>

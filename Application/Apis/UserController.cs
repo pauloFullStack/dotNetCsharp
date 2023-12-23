@@ -49,11 +49,34 @@ namespace Application.Apis
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult<UserDTO>> Post(UserDTO userDTO)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Retorna os erros de validação
+            }
+
+            try
+            {
+                //var user = await _userService.GetUserNameAsync(User.Identity.Name);
+                //categoriaDTO.UserId = user.Id.ToString();
+
+                await _userService.AddAsync(userDTO);
+                return new CreatedAtRouteResult("GetUserAsync", new { id = userDTO.Id }, userDTO);
+            }
+            catch (Exception ex)
+            {
+                throw new CategoryExceptions("Erro: contate o suporte");
+            }
+
+        }
 
         [HttpPut]
         public async Task<bool> Put(UserDTO userDTO)
         {
-            
+
             try
             {
                 await _userService.UpdateUserRoleAsync(userDTO.Id.ToString(), userDTO);
@@ -71,7 +94,7 @@ namespace Application.Apis
         {
 
             try
-            {   
+            {
                 await _userService.DeleteUserAsync(id);
                 return true;
             }

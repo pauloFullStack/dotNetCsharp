@@ -40,7 +40,11 @@ namespace Domain.Entities
             Name = name;
         }
 
-        public string UserId { get; set; }
-        public IdentityUser IdentityUser { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
+        public DateTime? DeletionDate { get; set; }
+
+        public string? UserId { get; set; }
+        public IdentityUser User { get; set; }
     }
 }

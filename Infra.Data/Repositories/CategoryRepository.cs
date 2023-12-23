@@ -10,13 +10,13 @@ namespace Infra.Data.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
-        IDbContextFactory<ApplicationDbContextObjects> _categoryContext;
-        public CategoryRepository(IDbContextFactory<ApplicationDbContextObjects> context)
+        IDbContextFactory<ApplicationDbContext> _categoryContext;
+        public CategoryRepository(IDbContextFactory<ApplicationDbContext> context)
         {
             _categoryContext = context;
         }
 
-        private async Task<ApplicationDbContextObjects> CreateDbContextAsync()
+        private async Task<ApplicationDbContext> CreateDbContextAsync()
         {
             return await _categoryContext.CreateDbContextAsync();
         }
@@ -24,6 +24,7 @@ namespace Infra.Data.Repositories
         public async Task<ActionResult<Category>> CreateAsync(Category category)
         {
             using var context = await CreateDbContextAsync();
+            
             context.Add(category);
             await context.SaveChangesAsync();
             return category;

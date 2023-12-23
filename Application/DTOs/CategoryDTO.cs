@@ -17,5 +17,6 @@ namespace Application.DTOs
         [MaxLength(100, ErrorMessage = "O nome não pode ter mais de 100 caracteres")]
         [DisplayName("Nome")]
         public string Name { get; set; }
+        public string? UserId { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿<AuthorizeView Roles="Admin">
+﻿<AuthorizeView Roles="User">
     <Authorized>
 
         @page "/users"
@@ -9,6 +9,10 @@
         @using System.Text.Json
 
         <h3>Users</h3>
+
+        <div style="margin-bottom:10px">
+            <a class="btn btn-outline-success" href="create/user">Criar usuário</a>
+        </div>
 
         @if (_userDTO == null)
         {

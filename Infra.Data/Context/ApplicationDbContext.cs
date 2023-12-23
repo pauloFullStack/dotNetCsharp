@@ -22,23 +22,14 @@ namespace Infra.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Category>()
-                 .ToTable("categories") // Nome da tabela no outro banco de dados
-                 .HasKey(c => c.UserId);
-
-            modelBuilder.Entity<Category>()
-                .Property<string>("UserId");
-
-            modelBuilder.Entity<Category>()
-                .HasOne<IdentityUser>() // Relacionamento com ApplicationUser do Identity
-                .WithMany()
-                .HasForeignKey("UserId")
-                .IsRequired();
-
-            modelBuilder.Ignore<Category>();
-
+            /* Essem metodo ApplyConfigurationsFromAssembly percorre todo o assembly e pega as classes que implementaram a interface: IEntityTypeConfiguration se não teria que fazer dessa forma:
+              builder.ApplyConfiguration(new CategoryConfiguration())    
+              builder.ApplyConfiguration(new ProductConfiguration())  
+             */
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContextObjects).Assembly);
         }
     }
 }

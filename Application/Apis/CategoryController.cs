@@ -5,21 +5,22 @@ using Domain.Exceptions;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Application.Services;
 
 namespace Application.Apis
 {
-    [Authorize(AuthenticationSchemes ="Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public CategoryController(ICategoryService categoryService, IMapper mapper)
+        public CategoryController(ICategoryService categoryService, IUserService userService)
         {
             _categoryService = categoryService;
-            _mapper = mapper;
+            _userService = userService;
         }
 
         // Atributo abaixo 'AllowAnonymous' Permite acesso a api, sem precisar de token
@@ -77,7 +78,9 @@ namespace Application.Apis
 
             try
             {
-                /* Ver como retorna annotations o erros que estão nos modelos, para mostrar na view */
+                var user = await _userService.GetUserNameAsync(User.Identity.Name);
+                categoriaDTO.UserId = user.Id.ToString();
+
                 await _categoryService.AddAsync(categoriaDTO);
                 return new CreatedAtRouteResult("GetByIdAsync", new { id = categoriaDTO.Id }, categoriaDTO);
             }

@@ -1,0 +1,74 @@
+﻿@* <AuthorizeView Roles="Admin,User">
+    <Authorized>
+ *@
+        @page "/create/user"
+        @inject HttpClient http
+@attribute [Authorize]
+        @inject NavigationManager navigation
+        @inject JavaScriptService js
+
+<h3>Criar Usuario</h3>
+
+
+<EditForm Model="@userDTO" OnValidSubmit="@CreateUserAsync">
+    <!-- O DataAnnotationsValidator está dentro do EditForm -->
+    <DataAnnotationsValidator />
+
+    <!-- Seus campos e validações vão aqui -->
+    <div style="padding:10px 0">
+
+        <label form="nome">Email</label>
+        <InputText id="txtCategoriaNome" @bind-Value="userDTO.Email" class="form-control" />
+        <span class="notification-inputs"></span>
+        <div style="margin-top:5px">
+            <ValidationMessage For="@(() => userDTO.Email)" />
+        </div>
+
+        <label form="nome">Senha</label>
+        <InputText @bind-Value="userDTO.Password" class="form-control" />
+        <span class="notification-inputs"></span>
+        <div style="margin-top:5px">
+            <ValidationMessage For="@(() => userDTO.Password)" />
+        </div>
+    </div>
+
+    <!-- Seus botões de ação -->
+    <div style="padding:10px 0">
+        <a href="users" class="btn btn-outline-dark">Voltar</a>&nbsp;&nbsp;
+        <button type="submit" class="btn btn-success">Salvar</button>
+    </div>
+</EditForm>
+
+
+@code {
+
+    UserDTO userDTO = new UserDTO();
+
+
+    /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await js.FocusById("txtCategoriaNome");
+    }
+
+
+    private async Task CreateUserAsync()
+    {
+        try
+        {
+            await http.PostAsJsonAsync("api/user", userDTO);
+            navigation.NavigateTo("users");
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+}
+    @* </Authorized>
+    <NotAuthorized>
+        <Index />
+    </NotAuthorized>
+</AuthorizeView> *@

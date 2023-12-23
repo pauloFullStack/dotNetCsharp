@@ -1,0 +1,122 @@
+﻿<AuthorizeView>
+    <Authorized>
+
+
+        @page "/listRoles"
+        @inject HttpClient http
+        @using Application.DTOs
+        @inject IJSRuntime js
+        @using System.Text.Json
+
+        <h3>ListRoles</h3>
+
+        @* <div style="padding:15px 0">
+            <div class="row">
+                <div class="col-lg-9 col-sm-12">
+                    <input type="text" class="form-control mb-2 mr-sm-2" @bind="nomeFiltro" placeholder="Filtrar pelo nome" />
+                </div>
+
+                <div class="col-lg-3 col-sm-12">
+                    <div style="display:flex;align-items:center;justify-content:flex-start;width:100%;padding:0 0 0 10px">
+                        <div>
+                            <button style="width:100%" type="button" class="btn btn-primary mr-sm-2 mb-2" @onclick="Filtrar">
+                                Filtrar
+                            </button>
+                        </div>
+
+                        <div style="padding: 0 0 0 10px">
+                            <button style="width:100%" type="button" class="btn btn-outline-dark mb-2" @onclick="LimparFiltro">
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+
+        <div style="margin-bottom:10px">
+            <a class="btn btn-outline-success" href="create/role">Criar permissão</a>
+        </div>
+
+        @if (_rolesDTO == null)
+        {
+            <div id="erroCategory"><h4>Carregando...</h4></div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Nome normalizado</th>
+                            @* <th>Editar</th>
+                            <th>Deletar</th> *@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var roleDTO in _rolesDTO)
+                        {
+                            <tr>
+                                <td>@roleDTO.Id</td>
+                                <td>@roleDTO.Name</td>
+                                <td>@roleDTO.NormalizedName</td>
+                                @* <td><a href="/addRoleUser/@roleDTO.Id" class="btn btn-primary">Novo Perfil</a></td> *@
+                                @* <td><button class="btn btn-danger" @onclick="@(() => DeletarCategoria(roleDTO.Id, roleDTO.Name))">Deletar</button></td> *@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+
+        @* <Confirma @ref="_confirma" onCancela="@CancelaConfirma" onConfirma="@DeleteConfirma">
+            <div>Deseja Realmente excluir o usuário <b><i>@NomeUser</i></b> ?</div>
+        </Confirma> *@
+
+        @code {
+
+        private IEnumerable<AspNetRolesDTO>? _rolesDTO { get; set; }
+        private Confirma? _confirma;
+
+        private string? IdUser;
+        private string? NomeUser { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            var httpResponse = await http.GetAsync($"api/AspNetRoles/all");
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                _rolesDTO = JsonSerializerGeneric<AspNetRolesDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
+            }
+        }
+
+        // private void DeletarCategoria(Guid id, string nomeUser)
+        // {
+        //     _confirma.Exibir();
+        //     IdUser = id.ToString();
+        //     NomeUser = nomeUser;
+        // }
+
+        // private async Task CancelaConfirma()
+        // {
+        //     _confirma.Ocultar();
+        // }
+
+        // private async Task DeleteConfirma()
+        // {
+        //     await http.DeleteAsync($"api/user/{IdUser}");
+        //     _confirma.Ocultar();
+        //     _rolesDTO = _rolesDTO.Where(user => user.Id != Guid.Parse(IdUser)).ToList();
+
+        // }
+
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Index />
+    </NotAuthorized>
+</AuthorizeView>
