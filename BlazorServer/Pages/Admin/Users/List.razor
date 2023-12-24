@@ -5,6 +5,7 @@
         @attribute [Authorize]
         @inject HttpClient http
         @using Application.DTOs
+        @inject IUserService _userService
         @inject IJSRuntime js
         @using System.Text.Json
 
@@ -60,12 +61,14 @@
 
         protected override async Task OnInitializedAsync()
         {
-            var httpResponse = await http.GetAsync($"api/user/all");
 
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                _userDTO = JsonSerializerGeneric<UserDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
-            }
+            _userDTO = await _userService.GetUsersAsync();
+            // var httpResponse = await http.GetAsync($"api/user/all");
+
+            // if (httpResponse.IsSuccessStatusCode)
+            // {
+            //     _userDTO = JsonSerializerGeneric<UserDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
+            // }
         }
 
         private void DeletarCategoria(Guid id, string nomeUser)

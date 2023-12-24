@@ -19,9 +19,27 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ActionResult<UserDTO>> AddAsync(UserDTO userDTO)
-        {            
-            return _mapper.Map<UserDTO>(await _userRepository.CreateAsync(userDTO.Email, userDTO.Password));
+        public async Task<NotificationsDTO> AddAsync(UserDTO userDTO)
+        {
+
+
+            try
+            {
+                var result = await _userRepository.CreateAsync(userDTO.Email, userDTO.Password);
+
+                if (result != null && result.Value.Id != null)
+                {
+                    return new NotificationsDTO("Usuário cadastrado com sucesso", "success");
+                }
+                else
+                {
+                    return new NotificationsDTO("Erro de conexão", "error");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NotificationsDTO("Entre em contato com suporte!", "error");
+            }
         }
 
         public async Task<IEnumerable<UserDTO>> GetUsersAsync()

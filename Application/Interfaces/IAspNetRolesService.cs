@@ -11,7 +11,7 @@ namespace Application.Interfaces
         Task<IEnumerable<AspNetRolesDTO>> GetRolesAsync();
         Task<IEnumerable<AspNetRolesDTO>> GetPaginationAndSearch(PaginationDTO paginationDTO, HttpContext context);
         Task<AspNetRolesDTO> GetByIdAsync(int? id);
-        Task<ActionResult<AspNetRolesDTO>> AddAsync(AspNetRolesDTO aspNetRolesDTO);
+        Task<NotificationsDTO> AddAsync(AspNetRolesDTO aspNetRolesDTO);
         Task UpdateAsync(AspNetRolesDTO aspNetRolesDTO);
         Task RemoveAsync(int? id);
     }

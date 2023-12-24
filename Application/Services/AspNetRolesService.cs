@@ -26,11 +26,22 @@ namespace Application.Services
 
         //}
 
-        public async Task<ActionResult<AspNetRolesDTO>> AddAsync(AspNetRolesDTO aspNetRolesDTO)
+        public async Task<NotificationsDTO> AddAsync(AspNetRolesDTO aspNetRolesDTO)
         {
-            var aspNetRolesEntity = _mapper.Map<AspNetRoles>(aspNetRolesDTO);
-            await _aspNetRolesRepository.CreateAsync(aspNetRolesEntity);
-            return _mapper.Map<AspNetRolesDTO>(aspNetRolesDTO); ;
+
+            try
+            {
+                var aspNetRolesEntity = _mapper.Map<AspNetRoles>(aspNetRolesDTO);
+                var response = await _aspNetRolesRepository.CreateAsync(aspNetRolesEntity);
+                return new NotificationsDTO("Permissão cadastrado com sucesso", "success");
+            }
+            catch (Exception ex)
+            {
+                return new NotificationsDTO("Erro de conexão!", "error");
+            }
+
+
+
         }
 
         public async Task<IEnumerable<AspNetRolesDTO>> GetRolesAsync()
@@ -48,7 +59,7 @@ namespace Application.Services
         {
             var categoryEntity = await _aspNetRolesRepository.GetByIdAsync(id);
             return _mapper.Map<AspNetRolesDTO>(categoryEntity);
-        }        
+        }
 
         public async Task UpdateAsync(AspNetRolesDTO aspNetRolesDTO)
         {

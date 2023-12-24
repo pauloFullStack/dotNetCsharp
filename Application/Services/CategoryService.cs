@@ -11,18 +11,30 @@ namespace Application.Services
     public class CategoryService : ICategoryService
     {
         private ICategoryRepository _categoryRepository;
+        private IUserService _userService;
         private readonly IMapper _mapper;
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IUserService userService)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _userService = userService;     
         }
 
-        public async Task<ActionResult<Category>> AddAsync(CategoryDTO categoryDTO)
+        public async Task<NotificationsDTO> AddAsync(CategoryDTO categoryDTO , string userName)
         {
-            var categoryEntity = _mapper.Map<Category>(categoryDTO);
-            await _categoryRepository.CreateAsync(categoryEntity);
-            return categoryEntity;
+            try
+            {
+                var user = await _userService.GetUserNameAsync(userName);
+                categoryDTO.UserId = user.Id.ToString();
+
+                var categoryEntity = _mapper.Map<Category>(categoryDTO);
+                await _categoryRepository.CreateAsync(categoryEntity);
+                return new NotificationsDTO("Categoria cadastrada com sucesso", "success");
+            }
+            catch (Exception ex)
+            {
+                return new NotificationsDTO("Erro de conexão!", "error");
+            }
         }
 
         public async Task<CategoryDTO> GetByIdAsync(int? id)

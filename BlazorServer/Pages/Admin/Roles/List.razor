@@ -6,6 +6,7 @@
         @inject HttpClient http
         @using Application.DTOs
         @inject IJSRuntime js
+        @inject IAspNetRolesService _aspNetRolesService
         @using System.Text.Json
 
         <h3>ListRoles</h3>
@@ -86,12 +87,13 @@
 
         protected override async Task OnInitializedAsync()
         {
-            var httpResponse = await http.GetAsync($"api/AspNetRoles/all");
+            _rolesDTO = await _aspNetRolesService.GetRolesAsync();
+            // var httpResponse = await http.GetAsync($"api/AspNetRoles/all");
 
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                _rolesDTO = JsonSerializerGeneric<AspNetRolesDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
-            }
+            // if (httpResponse.IsSuccessStatusCode)
+            // {
+            //     _rolesDTO = JsonSerializerGeneric<AspNetRolesDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
+            // }
         }
 
         // private void DeletarCategoria(Guid id, string nomeUser)

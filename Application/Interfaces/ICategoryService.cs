@@ -10,7 +10,7 @@ namespace Application.Interfaces
         Task<IEnumerable<CategoryDTO>> GetCategoriesAsync();
         Task<IEnumerable<CategoryDTO>> GetPaginationAndSearch(PaginationDTO paginationDTO, HttpContext context);
         Task<CategoryDTO> GetByIdAsync(int? id);
-        Task<ActionResult<Category>> AddAsync(CategoryDTO categoryDTO);
+        Task<NotificationsDTO> AddAsync(CategoryDTO categoryDTO, string userName);
         Task UpdateAsync(CategoryDTO categoryDTO);
         Task RemoveAsync(int? id);
     }

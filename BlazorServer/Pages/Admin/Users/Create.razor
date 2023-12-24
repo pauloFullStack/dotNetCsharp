@@ -1,11 +1,14 @@
 ﻿@* <AuthorizeView Roles="Admin,User">
-    <Authorized>
- *@
+    <Authorized>*@
+
         @page "/create/user"
         @inject HttpClient http
 @attribute [Authorize]
         @inject NavigationManager navigation
         @inject JavaScriptService js
+        @inject IUserService _userService
+        @inject IJSRuntime ijsRuntime
+
 
 <h3>Criar Usuario</h3>
 
@@ -43,7 +46,7 @@
 @code {
 
     UserDTO userDTO = new UserDTO();
-
+    NotificationsDTO notificationsDTO;
 
     /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -57,8 +60,20 @@
     {
         try
         {
-            await http.PostAsJsonAsync("api/user", userDTO);
-            navigation.NavigateTo("users");
+            notificationsDTO = await _userService.AddAsync(userDTO);
+            if (notificationsDTO.Status == "success")
+            {
+                bool status = await ijsRuntime.InvokeAsync<bool>("confirm", $"{notificationsDTO.Message}, voltar para lista de usuários");
+                if (status)
+                {
+                    navigation.NavigateTo("users");
+                }
+            }
+            else
+            {
+                // Fazer um modal para notificar
+            }
+
         }
         catch (Exception ex)
         {

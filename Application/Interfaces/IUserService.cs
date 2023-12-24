@@ -10,7 +10,7 @@ namespace Application.Interfaces
         Task<IEnumerable<UserDTO>> GetUsersAsync();
         Task<UserDTO> GetUserAsync(string id);
         Task<UserDTO> GetUserNameAsync(string userName);
-        Task<ActionResult<UserDTO>> AddAsync(UserDTO userDTO);
+        Task<NotificationsDTO> AddAsync(UserDTO userDTO);
         Task<bool> UpdateUserRoleAsync(string id, UserDTO user);
         Task<bool> DeleteUserAsync(string id);
     }

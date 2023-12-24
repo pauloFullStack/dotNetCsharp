@@ -5,7 +5,9 @@
         @inject HttpClient http
         @attribute [Authorize]
         @inject NavigationManager navigation
+        @inject IAspNetRolesService _aspNetRolesService
         @inject JavaScriptService js
+        @inject IJSRuntime ijsRuntime
 
 <h3>Criar Permissão</h3>
 
@@ -35,7 +37,7 @@
 @code {
 
     AspNetRolesDTO aspNetRolesDTO = new AspNetRolesDTO();
-
+    NotificationsDTO notificationsDTO;
 
     /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -46,9 +48,32 @@
 
 
     private async Task CreateRoleAsync()
-    {
-        await http.PostAsJsonAsync("api/AspNetRoles", aspNetRolesDTO);
-        navigation.NavigateTo("listRoles");
+    {        
+
+        try
+        {
+            notificationsDTO = await _aspNetRolesService.AddAsync(aspNetRolesDTO);
+            if (notificationsDTO.Status == "success")
+            {
+                bool status = await ijsRuntime.InvokeAsync<bool>("confirm", $"{notificationsDTO.Message}, voltar para lista de permissões");
+                if (status)
+                {
+                    navigation.NavigateTo("listRoles");
+                }
+            }
+            else
+            {
+                // Fazer um modal para notificar
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+        // await http.PostAsJsonAsync("api/AspNetRoles", aspNetRolesDTO);
+        // navigation.NavigateTo("listRoles");
     }
         }
     @* </Authorized>

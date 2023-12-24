@@ -5,6 +5,7 @@
         @inject HttpClient http
         @using Application.DTOs
         @inject IJSRuntime js
+        @inject ICategoryService _categoryService
         @using System.Text.Json
         @using System.Net.Http;
         @using System.Net.Http.Headers;
@@ -124,34 +125,36 @@
         {
             try
             {
-
+                _categorias = await _categoryService.GetCategoriesAsync();
                 // string token = await js.InvokeAsync<string>("localStorage.getItem", "accessToken");
-                string token = await js.InvokeAsync<string>("getCookie", "accessToken");
+                // string token = await js.InvokeAsync<string>("getCookie", "accessToken");
 
-                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                // http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var httpResponse = await http.GetAsync($"api/category?pagina={pagina}&quantidadePorPagina={quantidadePorPagina}&nomeFiltro={nomeFiltro}");
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    QuantidadeTotalPaginas = int.Parse(httpResponse.Headers.GetValues("totalPaginas").FirstOrDefault());
-                    var responseString = await httpResponse.Content.ReadAsStringAsync();
+                // var httpResponse = await http.GetAsync($"api/category?pagina={pagina}&quantidadePorPagina={quantidadePorPagina}&nomeFiltro={nomeFiltro}");
+                // if (httpResponse.IsSuccessStatusCode)
+                // {
+                //     QuantidadeTotalPaginas = int.Parse(httpResponse.Headers.GetValues("totalPaginas").FirstOrDefault());
+                //     var responseString = await httpResponse.Content.ReadAsStringAsync();
 
-                    _categorias = JsonSerializerGeneric<CategoryDTO>.ReturnList(responseString);
+                //     _categorias = JsonSerializerGeneric<CategoryDTO>.ReturnList(responseString);
 
-                    // Pego a quantidade de categorias que veio em cada pagina
-                    TotalCategoriasPorPaginas = _categorias.Count();
+                //     // Pego a quantidade de categorias que veio em cada pagina
+                //     TotalCategoriasPorPaginas = _categorias.Count();
 
-                    if (int.Parse(httpResponse.Headers.GetValues("quantidadeRegistroTotal").FirstOrDefault()) > quantidadePorPagina)
-                        showPagination = true;
-                    else
-                        showPagination = false;
+                //     if (int.Parse(httpResponse.Headers.GetValues("quantidadeRegistroTotal").FirstOrDefault()) > quantidadePorPagina)
+                //         showPagination = true;
+                //     else
+                //         showPagination = false;
 
-                    StateHasChanged();
-                }
+                //     StateHasChanged();
+                // }
+
+                StateHasChanged();
             }
             catch (Exception ex)
             {
-                await js.InvokeVoidAsync("showErroCategory", "erroCategory", "Erro category teste");
+                // await js.InvokeVoidAsync("showErroCategory", "erroCategory", "Erro category teste");
             }
 
         }

@@ -5,7 +5,10 @@
         @attribute [Authorize]
         @inject HttpClient http
         @inject NavigationManager navigation
+        @inject ICategoryService _categoryService
         @inject JavaScriptService js
+        @inject IJSRuntime ijsRuntime
+        @inject AuthenticationStateProvider AuthenticationStateProvider
 
         <h2>Nova Categoria</h2>
 
@@ -13,8 +16,8 @@
 
         @code {
 
-            CategoryDTO categoria = new CategoryDTO();
-
+        CategoryDTO categoria = new CategoryDTO();
+        NotificationsDTO notificationsDTO;
 
         /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
         protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -26,8 +29,35 @@
 
         private async Task CriarCategoria()
         {
-            await http.PostAsJsonAsync("api/category", categoria);
-            navigation.NavigateTo("categories");
+            try
+            {
+                // Acabar de arrumar o editarCategoria e o deletarCategoria
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User.Identity.Name;
+
+                notificationsDTO = await _categoryService.AddAsync(categoria, user);
+                if (notificationsDTO.Status == "success")
+                {
+                    bool status = await ijsRuntime.InvokeAsync<bool>("confirm", $"{notificationsDTO.Message}, voltar para lista de categorias");
+                    if (status)
+                    {
+                        navigation.NavigateTo("categories");
+                    }
+                }
+                else
+                {
+                    // Fazer um modal para notificar
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            // await http.PostAsJsonAsync("api/category", categoria);
+            // navigation.NavigateTo("categories");
         }
         }
     </Authorized>
