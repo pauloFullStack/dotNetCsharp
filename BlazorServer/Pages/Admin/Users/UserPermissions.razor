@@ -2,7 +2,7 @@
     <Authorized>
 
         @page "/userPermissions/{idUser}"
-        @inject HttpClient http
+        @* @inject HttpClient http *@
         @inject IWebHostEnvironment Env
         @inject NavigationManager NavigationManager
         @inject IAspNetRolesService _aspNetRolesService
@@ -25,7 +25,7 @@
         @* Colocar a opção de deletar na tabela de permissões do usuario, para excluir cada permissão especifica, colocar svg icone do X, e fazer update também *@
         <div class="form-group">
             <label class="control-label">Roles: </label>
-            <select id="selectePermissions" @onchange="RoleSelectionChanged" class="form-control">
+            <select id="selectePermissions" @onchange="RoleSelectionChanged" @onclick="LoadStatusDataOptions" class="form-control">
                 @if (_roles != null)
                 {
                     <option id="optionDefault" selected>Nenhuma Permissão selecionada</option>
@@ -33,7 +33,7 @@
                     @foreach (var role in _roles)
                     {
 
-                        if (_userRoles != null && _userRoles.Where(r => r.RoleId == role.Id).Count() == 0)
+                        if ((_userRoles.Where(r => r.RoleId == role.Id).Count() == 0) && (_selectedPermissions == null || _selectedPermissions.Where(r => r == role.Id).Count() == 0))
                         {
                             <option id="optionPermissiion-@role.Id" value="@role.Id">@role.Name</option>
                         }
@@ -100,8 +100,8 @@
                         <tr>
                             <th>Role Id</th>
                             <th>Permissão</th>
-                            @* <th>Editar</th>
-                        <th>Deletar</th> *@
+                            @* <th>Editar</th> *@
+                            <th>Deletar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,8 +110,12 @@
                             <tr>
                                 <td>@userRole.RoleId</td>
                                 <td>@userRole.RoleName</td>
-                                @* <td><a href="/userPermissions/@userDTO.Id" class="btn btn-primary">Permissões</a></td>
-                        <td><button class="btn btn-danger" @onclick="@(() => DeletarCategoria(userDTO.Id, userDTO.UserName))">Deletar</button></td> *@
+                                @* <td><a href="/userPermissions/@userDTO.Id" class="btn btn-primary">Permissões</a></td> *@
+                                <td>
+                                    <svg style="cursor:pointer;color:red" @onclick="@(() => DeleteUserPermissionAsync(userRole.UserId, userRole.RoleId))" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                    </svg>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -119,8 +123,14 @@
             </div>
         }
 
+        <div style="display:flex;align-items:center;justify-content:center">
+            <a href="users" class="btn btn-outline-dark">Voltar</a>
+        </div>
+
         @code
         {
+
+        List<string>? _selectedPermissions;
         List<AspNetRolesDTO>? _roles;
         IEnumerable<GetDataPermissionsDTO>? _userRoles;
 
@@ -198,6 +208,25 @@
             await _js.MountSelectedPermissions(_user.RoleId, _roles);
             _roles = await _aspNetRolesService.GetRolesAsync();
             _userRoles = await _userService.GetUserPermissionsAsync(IdUser);
+            _selectedPermissions = await _js.CreateStructDataPermissions(false);
+        }
+
+        private async Task DeleteUserPermissionAsync(string userId, string roleId)
+        {
+            var response = await _userService.DeleteUserPermissionAsync(userId, roleId);
+            if (response)
+            {
+                _userRoles = await _userService.GetUserPermissionsAsync(IdUser);
+                _roles = await _aspNetRolesService.GetRolesAsync();
+                _selectedPermissions = await _js.CreateStructDataPermissions(false);
+            }
+        }
+       
+        public async Task LoadStatusDataOptions()
+        {
+            _userRoles = await _userService.GetUserPermissionsAsync(IdUser);
+            _roles = await _aspNetRolesService.GetRolesAsync();
+            _selectedPermissions = await _js.CreateStructDataPermissions(false);
         }
 
         public async Task UpdateRole()

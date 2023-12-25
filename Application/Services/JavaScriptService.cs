@@ -41,9 +41,9 @@ namespace Application.Services
             await _jsRuntime.InvokeVoidAsync("mountSelectedPermissions", idPermission, listRoles);
         }
 
-        public async Task<List<string>> CreateStructDataPermissions()
+        public async Task<List<string>> CreateStructDataPermissions(bool clearForm = true)
         {
-            return await _jsRuntime.InvokeAsync<List<string>>("createStructDataPermissions");
+            return await _jsRuntime.InvokeAsync<List<string>>("createStructDataPermissions", clearForm);
         }
 
     }

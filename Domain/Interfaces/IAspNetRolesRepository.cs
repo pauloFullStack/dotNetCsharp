@@ -19,5 +19,6 @@ namespace Domain.Interfaces
         Task<ActionResult<AspNetRoles>> CreateAsync(AspNetRoles identityRole);
         Task<IdentityRole> UpdateAsync(IdentityRole identityRole);
         Task<IdentityRole> RemoveAsync(IdentityRole identityRole);
+        Task<bool> DeleteUserPermissionAsync(string userId, string roleId);
     }
 }

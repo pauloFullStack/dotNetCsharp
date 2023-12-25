@@ -118,5 +118,19 @@ namespace Infra.Data.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> DeleteUserPermissionAsync(string userId, string roleId)
+        {
+            using var context = await CreateDbContextAsync();
+            var userRoleDelte = await context.UserRoles.FirstOrDefaultAsync(field => field.RoleId == roleId && field.UserId == userId);
+
+            if (userRoleDelte is null)
+                return false;
+
+            context.UserRoles.Remove(userRoleDelte);
+            await context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

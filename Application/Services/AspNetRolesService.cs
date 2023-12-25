@@ -80,5 +80,10 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> DeleteUserPermissionAsync(string userId, string roleId)
+        {
+            return await _aspNetRolesRepository.DeleteUserPermissionAsync(userId, roleId);
+        }
     }
 }

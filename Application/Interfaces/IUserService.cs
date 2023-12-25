@@ -14,5 +14,6 @@ namespace Application.Interfaces
         Task<NotificationsDTO> AddAsync(UserDTO userDTO);
         Task<bool> UpdateUserRoleAsync(UserDTO user, List<string> ids);
         Task<bool> DeleteUserAsync(string id);
+        Task<bool> DeleteUserPermissionAsync(string userId, string roleId);
     }
 }

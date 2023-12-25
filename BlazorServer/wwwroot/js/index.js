@@ -159,13 +159,13 @@ function mountSelectedPermissions(idPermission, lislistRoles) {
     //let selectePermissions = document.querySelector('#selectePermissions');
     //const optionPermissions = document.querySelector(`#optionPermissiion-${idPermission}`);
     //const optionPermissionsDefault = document.querySelector(`#optionDefault`);
-
+    optionPermissionsDefault = document.querySelector(`#optionDefault`).selected = true;
     //if (selectePermissions && (selectePermissions.length - 2) === 0) {
     //    optionPermissionsDefault.textContent = "Nenhuma permissão encontrada";
     //} else {
     //    optionPermissionsDefault.textContent = optionPermissions.textContent;
-    //    //if (optionPermissions && selectePermissions)
-    //    //    selectePermissions.removeChild(optionPermissions);
+    //    if (optionPermissions && selectePermissions)
+    //        selectePermissions.removeChild(optionPermissions);
     //}
 
 }
@@ -174,26 +174,28 @@ function setOptions(idPermission, namePermission) {
 
     const divPermissionsSelected = document.querySelector('#listRoles');
 
-    if (divPermissionsSelected.childElementCount == 1)
+    if (divPermissionsSelected && divPermissionsSelected.childElementCount == 1)
         document.querySelector('#btnSavePermissions').style.display = 'none';
 
-    let selectePermissions = document.querySelector('#selectePermissions');
+    //let selectePermissions = document.querySelector('#selectePermissions');
 
-    if (selectePermissions) {
+    //if (selectePermissions) {
 
-        let newOption = document.createElement('option');
+    //    let newOption = document.createElement('option');
 
-        newOption.value = idPermission;
-        newOption.text = namePermission;
-        newOption.id = `optionPermissiion-${idPermission}`;
+    //    newOption.value = idPermission;
+    //    newOption.text = namePermission;
+    //    newOption.id = `optionPermissiion-${idPermission}`;
 
-        selectePermissions.appendChild(newOption);
+    //    selectePermissions.appendChild(newOption);
 
-        document.querySelector(`#divListPermissionsSelected-${idPermission}`).remove();
-    }
+    //    document.querySelector(`#divListPermissionsSelected-${idPermission}`).remove();
+    //}
+    document.querySelector(`#divListPermissionsSelected-${idPermission}`).remove();
 }
 
-function createStructDataPermissions() {
+
+function createStructDataPermissions(clearForm) {
     // Seleciona o formulário pelo ID
     let form = document.querySelector('#listRoles');
 
@@ -212,9 +214,11 @@ function createStructDataPermissions() {
         });
     }
 
-    form.innerHTML = '';
-    document.querySelector(`#optionDefault`).selected = true;
-    document.querySelector('#btnSavePermissions').style.display = 'none';
+    if (clearForm) {
+        form.innerHTML = '';
+        document.querySelector(`#optionDefault`).selected = true;
+        document.querySelector('#btnSavePermissions').style.display = 'none';
+    }
 
     return valoresDosSpans;
 

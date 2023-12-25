@@ -103,5 +103,11 @@ namespace Application.Services
             return true;
         }
 
+        public async Task<bool> DeleteUserPermissionAsync(string userId, string roleId)
+        {
+            return await _aspNetRolesService.DeleteUserPermissionAsync(userId, roleId);
+        }
+
+
     }
 }

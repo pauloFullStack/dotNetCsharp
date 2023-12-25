@@ -1,9 +1,8 @@
-﻿<AuthorizeView Roles="Admin,User">
+﻿<AuthorizeView Roles="Admin">
     <Authorized>
 
         @page "/category/{id:int}/edit/"
-        @attribute [Authorize]
-        @inject HttpClient http
+        @* @inject HttpClient http *@
         @inject NavigationManager navigation
         @inject ICategoryService _categoryService
         @inject JavaScriptService js

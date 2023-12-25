@@ -1,8 +1,7 @@
-﻿<AuthorizeView Roles="Admin,User">
+﻿<AuthorizeView Roles="Admin">
     <Authorized>
         @page "/categories"
-        @attribute [Authorize]
-        @inject HttpClient http
+        @* @inject HttpClient http *@
         @using Application.DTOs
         @inject IJSRuntime js
         @inject ICategoryService _categoryService

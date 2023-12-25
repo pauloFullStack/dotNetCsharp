@@ -1,83 +1,83 @@
-﻿@* <AuthorizeView Roles="Admin,User">
+﻿<AuthorizeView Roles="Admin,User">
     <Authorized>
- *@
+
         @page "/create/role"
-        @inject HttpClient http
-        @attribute [Authorize]
+        @* @inject HttpClient http *@
+        @* @attribute [Authorize] *@
         @inject NavigationManager navigation
         @inject IAspNetRolesService _aspNetRolesService
         @inject JavaScriptService js
         @inject IJSRuntime ijsRuntime
 
-<h3>Criar Permissão</h3>
+        <h3>Criar Permissão</h3>
 
 
-<EditForm Model="@aspNetRolesDTO" OnValidSubmit="@CreateRoleAsync">
-    <!-- O DataAnnotationsValidator está dentro do EditForm -->
-    <DataAnnotationsValidator />
+        <div>
+            <!-- O DataAnnotationsValidator está dentro do EditForm -->
+            @* <DataAnnotationsValidator /> *@
 
-    <!-- Seus campos e validações vão aqui -->
-    <div style="padding:10px 0">
-        <label form="nome">Nome</label>
-        <InputText id="txtCategoriaNome" @bind-Value="aspNetRolesDTO.Name" class="form-control" />
-        <span class="notification-inputs"></span>
-        <div style="margin-top:5px">
-            <ValidationMessage For="@(() => aspNetRolesDTO.Name)" />
+            <!-- Seus campos e validações vão aqui -->
+            <div style="padding:10px 0">
+                <label form="nome">Nome</label>
+                <input id="txtCategoriaNome" @bind="aspNetRolesDTO.Name" class="form-control" />
+                <span class="notification-inputs"></span>
+                @* <div style="margin-top:5px">
+                    <ValidationMessage For="@(() => aspNetRolesDTO.Name)" />
+                </div> *@
+            </div>
+
+            <!-- Seus botões de ação -->
+            <div style="padding:10px 0">
+                <a href="listRoles" class="btn btn-outline-dark">Voltar</a>&nbsp;&nbsp;
+                <button type="button" @onclick="CreateRoleAsync" class="btn btn-success">Salvar</button>
+            </div>
         </div>
-    </div>
-
-    <!-- Seus botões de ação -->
-    <div style="padding:10px 0">
-        <a href="listRoles" class="btn btn-outline-dark">Voltar</a>&nbsp;&nbsp;
-        <button type="submit" class="btn btn-success">Salvar</button>
-    </div>
-</EditForm>
 
 
-@code {
+        @code {
 
-    AspNetRolesDTO aspNetRolesDTO = new AspNetRolesDTO();
-    NotificationsDTO notificationsDTO;
+        AspNetRolesDTO aspNetRolesDTO = new AspNetRolesDTO();
+        NotificationsDTO notificationsDTO;
 
-    /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await js.FocusById("txtCategoriaNome");
-    }
-
-
-    private async Task CreateRoleAsync()
-    {        
-
-        try
+        /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
+        protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-            notificationsDTO = await _aspNetRolesService.AddAsync(aspNetRolesDTO);
-            if (notificationsDTO.Status == "success")
+            if (firstRender)
+                await js.FocusById("txtCategoriaNome");
+        }
+
+
+        private async Task CreateRoleAsync()
+        {
+
+            try
             {
-                bool status = await ijsRuntime.InvokeAsync<bool>("confirm", $"{notificationsDTO.Message}, voltar para lista de permissões");
-                if (status)
+                notificationsDTO = await _aspNetRolesService.AddAsync(aspNetRolesDTO);
+                if (notificationsDTO.Status == "success")
                 {
-                    navigation.NavigateTo("listRoles");
+                    bool status = await ijsRuntime.InvokeAsync<bool>("confirm", $"{notificationsDTO.Message}, voltar para lista de permissões");
+                    if (status)
+                    {
+                        navigation.NavigateTo("listRoles");
+                    }
                 }
+                else
+                {
+                    // Fazer um modal para notificar
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                // Fazer um modal para notificar
+
+                throw;
             }
-
+            // await http.PostAsJsonAsync("api/AspNetRoles", aspNetRolesDTO);
+            // navigation.NavigateTo("listRoles");
         }
-        catch (Exception ex)
-        {
-
-            throw;
         }
-        // await http.PostAsJsonAsync("api/AspNetRoles", aspNetRolesDTO);
-        // navigation.NavigateTo("listRoles");
-    }
-        }
-    @* </Authorized>
+    </Authorized>
     <NotAuthorized>
         <Index />
     </NotAuthorized>
-</AuthorizeView> *@
+</AuthorizeView>

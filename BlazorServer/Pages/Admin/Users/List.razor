@@ -2,8 +2,7 @@
     <Authorized>
 
         @page "/users"
-        @attribute [Authorize]
-        @inject HttpClient http
+        @* @inject HttpClient http *@
         @using Application.DTOs
         @inject IUserService _userService
         @inject IJSRuntime js
