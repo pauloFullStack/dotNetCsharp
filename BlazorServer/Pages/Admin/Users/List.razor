@@ -37,7 +37,7 @@
                             <tr>
                                 <td>@userDTO.Id</td>
                                 <td>@userDTO.UserName</td>
-                                <td><a href="/addRoleUser/@userDTO.Id" class="btn btn-primary">Novo Perfil</a></td>
+                                <td><a href="/userPermissions/@userDTO.Id" class="btn btn-primary">Permissões</a></td>
                                 <td><button class="btn btn-danger" @onclick="@(() => DeletarCategoria(userDTO.Id, userDTO.UserName))">Deletar</button></td>
                             </tr>
                         }
@@ -85,9 +85,12 @@
 
         private async Task DeleteConfirma()
         {
-            await http.DeleteAsync($"api/user/{IdUser}");
+            await _userService.DeleteUserAsync(IdUser);
             _confirma.Ocultar();
             _userDTO = _userDTO.Where(user => user.Id != Guid.Parse(IdUser)).ToList();
+            // await http.DeleteAsync($"api/user/{IdUser}");
+            // _confirma.Ocultar();
+            // _userDTO = _userDTO.Where(user => user.Id != Guid.Parse(IdUser)).ToList();
 
         }
 

@@ -12,11 +12,13 @@ namespace Application.Services
     public class UserService : IUserService
     {
         private IUserRepository _userRepository;
+        private IAspNetRolesService _aspNetRolesService;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, IAspNetRolesService aspNetRolesService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _aspNetRolesService = aspNetRolesService;
         }
 
         public async Task<NotificationsDTO> AddAsync(UserDTO userDTO)
@@ -42,10 +44,20 @@ namespace Application.Services
             }
         }
 
+
+
+
+
+
         public async Task<IEnumerable<UserDTO>> GetUsersAsync()
         {
             var userEntity = await _userRepository.GetUsersAsync();
             return _mapper.Map<IEnumerable<UserDTO>>(userEntity);
+        }
+
+        public async Task<IEnumerable<GetDataPermissionsDTO>> GetUserPermissionsAsync(string userId)
+        {
+            return _mapper.Map<IEnumerable<GetDataPermissionsDTO>>(await _aspNetRolesService.GetUserPermissions(userId));
         }
 
         public async Task<UserDTO> GetUserAsync(string id)
@@ -60,11 +72,30 @@ namespace Application.Services
             return _mapper.Map<UserDTO>(userEntity);
         }
 
-        public async Task<bool> UpdateUserRoleAsync(string id, UserDTO user)
+
+
+
+        public async Task<bool> UpdateUserRoleAsync(UserDTO user, List<string> ids)
         {
-            var userEntity = await _userRepository.UpdateUserRoleAsync(id, _mapper.Map<User>(user));
-            return true;
+            try
+            {
+                foreach (string id in ids)
+                {
+                    user.RoleId = id;
+                    var userEntity = await _userRepository.UpdateUserRoleAsync(user.Id.ToString(), _mapper.Map<User>(user));
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
+
+
+
 
         public async Task<bool> DeleteUserAsync(string id)
         {

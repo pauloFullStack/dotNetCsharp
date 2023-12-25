@@ -5,11 +5,18 @@
         @attribute [Authorize]
         @inject HttpClient http
         @inject NavigationManager navigation
+        @inject ICategoryService _categoryService
         @inject JavaScriptService js
 
         <h3>Editar Categoria</h3>
 
         <Form CategoryDTO="@categoria" OnValidSubmit="@EditarCategoria" />
+
+        <Notification NotificationResponse="@notificationsDTO"
+                      ShowNotification="isShowModalNotification"
+                      TextBtnCancel="Não"
+                      TextBtnConfirm="Sim"
+                      OnConfirma="@ConfirmNotification" />
 
         @code {
 
@@ -17,21 +24,32 @@
         public int id { get; set; }
 
         CategoryDTO categoria = new CategoryDTO();
+        NotificationsDTO? notificationsDTO;
+        private bool isShowModalNotification = false;
 
         /* OnParametersSetAsync é outro método do ciclo de vida em páginas Razor no ASP.NET Core.
         * Assim como o OnInitializedAsync, ele lida com a inicialização da página, mas é específico para a
         * atualização de parâmetros. */
         protected async override Task OnParametersSetAsync()
         {
-            categoria = await http.GetFromJsonAsync<CategoryDTO>($"api/category/{id}");
+            categoria = await _categoryService.GetByIdAsync(id);
+            // categoria = await http.GetFromJsonAsync<CategoryDTO>($"api/category/{id}");
         }
 
         private async Task EditarCategoria()
         {
-            await http.PutAsJsonAsync("api/category", categoria);
-            navigation.NavigateTo("categories");
+            notificationsDTO = await _categoryService.UpdateAsync(categoria);
+            isShowModalNotification = true;
+
+            // await http.PutAsJsonAsync("api/category", categoria);
+            // navigation.NavigateTo("categories");
         }
 
+
+        private async Task ConfirmNotification()
+        {
+            navigation.NavigateTo("categories");
+        }
 
         }
     </Authorized>

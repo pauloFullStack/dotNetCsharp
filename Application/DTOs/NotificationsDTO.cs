@@ -10,11 +10,13 @@ namespace Application.DTOs
     {
         public string? Message { get; set; }
         public string? Status { get; set; }
+        public string? Title { get; set; }
 
         public NotificationsDTO() { }
 
-        public NotificationsDTO(string message, string status)
+        public NotificationsDTO(string message, string status, string title = "")
         {
+            Title = title;
             Message = message;
             Status = status;
         }

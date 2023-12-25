@@ -166,17 +166,20 @@
 
         private async Task DeleteConfirma()
         {
-            await http.DeleteAsync($"api/category/{IdCategoria}");
+            await _categoryService.RemoveAsync(IdCategoria);
             confirma.Ocultar();
+            await CarregaCategorias();
+            // await http.DeleteAsync($"api/category/{IdCategoria}");
+            // confirma.Ocultar();
 
-            if (TotalCategoriasPorPaginas == 1 && paginaAtual > 1)
-            {
-                await CarregaCategorias(--paginaAtual);
-            }
-            else
-            {
-                await CarregaCategorias(paginaAtual);
-            }
+            // if (TotalCategoriasPorPaginas == 1 && paginaAtual > 1)
+            // {
+            //     await CarregaCategorias(--paginaAtual);
+            // }
+            // else
+            // {
+            //     await CarregaCategorias(paginaAtual);
+            // }
 
         }
 

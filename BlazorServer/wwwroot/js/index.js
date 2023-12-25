@@ -131,9 +131,96 @@ function login(email, password) {
         });
 }
 
-function teste() {
-    alert('Teste');
+function mountSelectedPermissions(idPermission, lislistRoles) {
+
+    const divPermissionsSelected = document.querySelector('#listRoles');
+    let newPermissionSelected;
+
+    lislistRoles.forEach((role) => {
+
+        if (role.id == idPermission) {
+            newPermissionSelected = document.createElement('span');
+            newPermissionSelected.setAttribute('value', role.id);
+            newPermissionSelected.setAttribute('id', `divListPermissionsSelected-${role.id}`);
+            newPermissionSelected.innerHTML = `${role.name}&nbsp;&nbsp;<svg style="cursor:pointer" onclick="setOptions('${role.id}', '${role.name}')" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+</svg>`;
+
+            newPermissionSelected.style = 'background-color: gray;padding:5px 10px;border-radius:10px;color:#fff;margin-right:10px';
+
+            divPermissionsSelected.appendChild(newPermissionSelected);
+        }
+
+    });
+
+    if (divPermissionsSelected.childElementCount >= 1)
+        document.querySelector('#btnSavePermissions').style.display = 'block';
+
+    //let selectePermissions = document.querySelector('#selectePermissions');
+    //const optionPermissions = document.querySelector(`#optionPermissiion-${idPermission}`);
+    //const optionPermissionsDefault = document.querySelector(`#optionDefault`);
+
+    //if (selectePermissions && (selectePermissions.length - 2) === 0) {
+    //    optionPermissionsDefault.textContent = "Nenhuma permissão encontrada";
+    //} else {
+    //    optionPermissionsDefault.textContent = optionPermissions.textContent;
+    //    //if (optionPermissions && selectePermissions)
+    //    //    selectePermissions.removeChild(optionPermissions);
+    //}
+
 }
+
+function setOptions(idPermission, namePermission) {
+
+    const divPermissionsSelected = document.querySelector('#listRoles');
+
+    if (divPermissionsSelected.childElementCount == 1)
+        document.querySelector('#btnSavePermissions').style.display = 'none';
+
+    let selectePermissions = document.querySelector('#selectePermissions');
+
+    if (selectePermissions) {
+
+        let newOption = document.createElement('option');
+
+        newOption.value = idPermission;
+        newOption.text = namePermission;
+        newOption.id = `optionPermissiion-${idPermission}`;
+
+        selectePermissions.appendChild(newOption);
+
+        document.querySelector(`#divListPermissionsSelected-${idPermission}`).remove();
+    }
+}
+
+function createStructDataPermissions() {
+    // Seleciona o formulário pelo ID
+    let form = document.querySelector('#listRoles');
+
+    const valoresDosSpans = [];
+
+    if (form) {
+        // Seleciona todos os spans dentro do formulário
+        const spans = form.querySelectorAll('span');
+
+        // Itera sobre os spans para obter os valores do atributo 'value'
+        spans.forEach(span => {
+            const valor = span.getAttribute('value');
+            if (valor) {
+                valoresDosSpans.push(valor);
+            }
+        });
+    }
+
+    form.innerHTML = '';
+    document.querySelector(`#optionDefault`).selected = true;
+    document.querySelector('#btnSavePermissions').style.display = 'none';
+
+    return valoresDosSpans;
+
+
+}
+
 
 function redirectRoute(route) {
     window.location.href = route;

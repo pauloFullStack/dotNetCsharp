@@ -1,0 +1,73 @@
+﻿@if (ShowNotification)
+{
+    <div class="modal-backdrop show"></div>
+
+    <div class="modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:block">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @if (NotificationResponse?.Title != "")
+                {
+                    <div class="modal-header">
+                        <h5 class="modal-title">@NotificationResponse?.Title</h5>
+                        <button type="button" @onclick="HideModal" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                <div class="modal-body">
+                    @* @ChildContent *@
+
+                    @if (NotificationResponse?.Status == "success")
+                    {
+                        <span style="color:green">@NotificationResponse.Message</span>
+                    }
+                    else if (NotificationResponse?.Status == "warning")
+                    {
+                        <span style="color:red">@NotificationResponse.Message</span>
+                    }
+                    else if (NotificationResponse?.Status == "error")
+                    {
+                        <span style="color:yellow">@NotificationResponse.Message</span>
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    @if (IsShowButtonCancel)
+                    {
+                        <button type="button" @onclick="HideModal" class="btn btn-secondary" data-dismiss="modal">@TextBtnCancel</button>
+                    }
+                    <button type="button" @onclick="OnConfirma" class="btn btn-primary">@TextBtnConfirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public bool ShowNotification { get; set; } = false;
+
+    [Parameter]
+    public bool IsShowButtonCancel { get; set; } = true;
+
+    [Parameter]
+    public NotificationsDTO? NotificationResponse { get; set; }
+
+    [Parameter]
+    public string? TextBtnCancel { get; set; } = "Cancelar";
+
+    [Parameter]
+    public string? TextBtnConfirm { get; set; } = "Ok";
+
+    [Parameter]
+    public EventCallback OnConfirma { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancela { get; set; }
+
+    public void ShowModal() => ShowNotification = true;
+    public void HideModal() => ShowNotification = false;
+
+}

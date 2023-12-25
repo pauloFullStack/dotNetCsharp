@@ -9,9 +9,10 @@ namespace Application.Interfaces
     {
         Task<IEnumerable<UserDTO>> GetUsersAsync();
         Task<UserDTO> GetUserAsync(string id);
+        Task<IEnumerable<GetDataPermissionsDTO>> GetUserPermissionsAsync(string userId);
         Task<UserDTO> GetUserNameAsync(string userName);
         Task<NotificationsDTO> AddAsync(UserDTO userDTO);
-        Task<bool> UpdateUserRoleAsync(string id, UserDTO user);
+        Task<bool> UpdateUserRoleAsync(UserDTO user, List<string> ids);
         Task<bool> DeleteUserAsync(string id);
     }
 }

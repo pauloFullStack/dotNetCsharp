@@ -8,8 +8,9 @@ namespace Application.Interfaces
 {
     public interface IAspNetRolesService
     {
-        Task<IEnumerable<AspNetRolesDTO>> GetRolesAsync();
+        Task<List<AspNetRolesDTO>> GetRolesAsync();
         Task<IEnumerable<AspNetRolesDTO>> GetPaginationAndSearch(PaginationDTO paginationDTO, HttpContext context);
+        Task<IEnumerable<GetDataPermissionsDTO>> GetUserPermissions(string userId);
         Task<AspNetRolesDTO> GetByIdAsync(int? id);
         Task<NotificationsDTO> AddAsync(AspNetRolesDTO aspNetRolesDTO);
         Task UpdateAsync(AspNetRolesDTO aspNetRolesDTO);

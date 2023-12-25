@@ -44,10 +44,10 @@ namespace Application.Services
 
         }
 
-        public async Task<IEnumerable<AspNetRolesDTO>> GetRolesAsync()
+        public async Task<List<AspNetRolesDTO>> GetRolesAsync()
         {
             var userEntity = await _aspNetRolesRepository.GetRolesAsync();
-            return _mapper.Map<IEnumerable<AspNetRolesDTO>>(userEntity);
+            return _mapper.Map<List<AspNetRolesDTO>>(userEntity);
         }
 
         public async Task<IEnumerable<AspNetRolesDTO>> GetPaginationAndSearch(PaginationDTO paginationDTO, HttpContext context)
@@ -61,10 +61,20 @@ namespace Application.Services
             return _mapper.Map<AspNetRolesDTO>(categoryEntity);
         }
 
+        public async Task<IEnumerable<GetDataPermissionsDTO>> GetUserPermissions(string userId)
+        {
+            var listPermissionsUser = await _aspNetRolesRepository.GetUserPermissions(userId);
+            return _mapper.Map<IEnumerable<GetDataPermissionsDTO>>(listPermissionsUser);
+        }
+
+
         public async Task UpdateAsync(AspNetRolesDTO aspNetRolesDTO)
         {
             throw new NotImplementedException();
         }
+
+
+
 
         public async Task RemoveAsync(int? id)
         {

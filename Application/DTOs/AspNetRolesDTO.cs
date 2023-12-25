@@ -13,4 +13,12 @@ namespace Application.DTOs
         public string? NormalizedName { get; set; }
         public string? ConcurrencyStamp { get; set; }
     }
+
+    public class GetDataPermissionsDTO
+    {
+        public string? UserId { get; set; }
+        public string? UserName { get; set; }
+        public string? RoleName { get; set; }
+        public string? RoleId { get; set; }
+    }
 }

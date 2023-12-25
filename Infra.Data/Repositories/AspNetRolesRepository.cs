@@ -21,10 +21,36 @@ namespace Infra.Data.Repositories
             _rolesContext = context;
         }
 
+
+
         private async Task<ApplicationDbContext> CreateDbContextAsync()
         {
             return await _rolesContext.CreateDbContextAsync();
         }
+
+        public async Task<ActionResult<AspNetRoles>> CreateAsync(AspNetRoles identityRole)
+        {
+            try
+            {
+                using var context = await CreateDbContextAsync();
+                IdentityRole objectRoles = new IdentityRole();
+
+                objectRoles.Name = identityRole.Name;
+                objectRoles.NormalizedName = identityRole.Name.ToUpper();
+
+                context.Add(objectRoles);
+                await context.SaveChangesAsync();
+                return identityRole;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
+
 
         public async Task<IEnumerable<IdentityRole>> GetRolesAsync()
         {
@@ -43,31 +69,50 @@ namespace Infra.Data.Repositories
             return await context.Roles.FindAsync(id);
         }
 
-        public async Task<ActionResult<AspNetRoles>> CreateAsync(AspNetRoles identityRole)
+        //public async Task<IEnumerable<IdentityUserRole<string>>> GetUserPermissions(string userId)
+        public async Task<IEnumerable<GetDataPermissions>> GetUserPermissions(string userId)
         {
-            try
+            using var context = await CreateDbContextAsync();
+            return await context.Users
+            .Where(u => u.Id == userId)
+            .Join(
+                context.UserRoles,
+                user => user.Id,
+                userRole => userRole.UserId,
+                (user, userRole) => new { user, userRole }
+            )
+            .Join(
+                context.Roles,
+                ur => ur.userRole.RoleId,
+                role => role.Id,
+                (ur, role) => new { ur.user, role }
+            )
+            .Select(result => new GetDataPermissions()
             {
-                using var context = await CreateDbContextAsync();
-                IdentityRole objectRoles = new IdentityRole();
-                
-                objectRoles.Name = identityRole.Name;
-                objectRoles.NormalizedName = identityRole.Name.ToUpper();
+                UserId = result.user.Id,
+                UserName = result.user.UserName,
+                RoleName = result.role.Name,
+                RoleId = result.role.Id
+                // Adicione outras propriedades que deseja recuperar
+            })
+        .ToListAsync();
 
-                context.Add(objectRoles);
-                await context.SaveChangesAsync();
-                return identityRole;
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
+            //using var context = await CreateDbContextAsync();
+            //return await context.UserRoles.Where(field => field.UserId == userId).ToListAsync();
         }
+
+
+
+
 
         public async Task<IdentityRole> UpdateAsync(IdentityRole identityRole)
         {
             throw new NotImplementedException();
         }
+
+
+
+
 
         public async Task<IdentityRole> RemoveAsync(IdentityRole identityRole)
         {

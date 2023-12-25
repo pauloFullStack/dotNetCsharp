@@ -17,7 +17,7 @@
         @code {
 
         CategoryDTO categoria = new CategoryDTO();
-        NotificationsDTO notificationsDTO;
+        NotificationsDTO? notificationsDTO;
 
         /* O método OnAfterRenderAsync é chamado após o componente ser renderizado */
         protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -31,7 +31,6 @@
         {
             try
             {
-                // Acabar de arrumar o editarCategoria e o deletarCategoria
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var user = authState.User.Identity.Name;
 

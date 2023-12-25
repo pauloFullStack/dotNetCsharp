@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Application.DTOs;
 using Microsoft.JSInterop;
 
 namespace Application.Services
@@ -34,5 +35,16 @@ namespace Application.Services
         {
             await _jsRuntime.InvokeVoidAsync("redirectRoute", route);
         }
+
+        public async Task MountSelectedPermissions(string idPermission, IEnumerable<AspNetRolesDTO> listRoles)
+        {
+            await _jsRuntime.InvokeVoidAsync("mountSelectedPermissions", idPermission, listRoles);
+        }
+
+        public async Task<List<string>> CreateStructDataPermissions()
+        {
+            return await _jsRuntime.InvokeAsync<List<string>>("createStructDataPermissions");
+        }
+
     }
 }

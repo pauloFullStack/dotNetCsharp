@@ -16,6 +16,8 @@ namespace Application.Mappings
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<IdentityRole, AspNetRolesDTO>().ReverseMap();
             CreateMap<AspNetRoles, AspNetRolesDTO>().ReverseMap();
+            CreateMap<GetDataPermissions, GetDataPermissionsDTO>().ReverseMap();
+            CreateMap<IdentityUserRole<string>, AspNetUserRolesDTO>().ReverseMap();
 
         }
     }

@@ -11,7 +11,7 @@ namespace Application.Interfaces
         Task<IEnumerable<CategoryDTO>> GetPaginationAndSearch(PaginationDTO paginationDTO, HttpContext context);
         Task<CategoryDTO> GetByIdAsync(int? id);
         Task<NotificationsDTO> AddAsync(CategoryDTO categoryDTO, string userName);
-        Task UpdateAsync(CategoryDTO categoryDTO);
+        Task<NotificationsDTO> UpdateAsync(CategoryDTO categoryDTO);
         Task RemoveAsync(int? id);
     }
 }

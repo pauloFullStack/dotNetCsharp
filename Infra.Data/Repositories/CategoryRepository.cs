@@ -24,7 +24,7 @@ namespace Infra.Data.Repositories
         public async Task<ActionResult<Category>> CreateAsync(Category category)
         {
             using var context = await CreateDbContextAsync();
-            
+
             context.Add(category);
             await context.SaveChangesAsync();
             return category;
@@ -32,8 +32,16 @@ namespace Infra.Data.Repositories
 
         public async Task<Category> GetByIdAsync(int? id)
         {
-            using var context = await CreateDbContextAsync();
-            return await context.Categories.FindAsync(id);
+            try
+            {
+                using var context = await CreateDbContextAsync();
+                return await context.Categories.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task<IEnumerable<Category>> GetCategoriesAsync()
@@ -63,7 +71,7 @@ namespace Infra.Data.Repositories
                 return await queryable.Page(pagination).ToListAsync();
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw;
             }

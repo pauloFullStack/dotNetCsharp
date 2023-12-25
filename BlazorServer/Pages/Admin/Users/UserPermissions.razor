@@ -1,0 +1,226 @@
+﻿<AuthorizeView Roles="User">
+    <Authorized>
+
+        @page "/userPermissions/{idUser}"
+        @inject HttpClient http
+        @inject IWebHostEnvironment Env
+        @inject NavigationManager NavigationManager
+        @inject IAspNetRolesService _aspNetRolesService
+        @inject IUserService _userService
+        @inject JavaScriptService _js
+
+        <h2>Atribuir Perfil ao usuário</h2>
+
+        <br />
+
+        @if (Exibir)
+        {
+            <div style="display:flex;align-items:center;justify-content:center;padding:20px;border: solid .1rem #000;border-radius:5px;margin-bottom:15px">
+                <span>@Mensagem</span>
+                <button class="btn btn-outline-info" @onclick="CloseMessageNotification">Fechar</button>
+            </div>
+        }
+
+        <h4>@_user.UserName</h4>
+        @* Colocar a opção de deletar na tabela de permissões do usuario, para excluir cada permissão especifica, colocar svg icone do X, e fazer update também *@
+        <div class="form-group">
+            <label class="control-label">Roles: </label>
+            <select id="selectePermissions" @onchange="RoleSelectionChanged" class="form-control">
+                @if (_roles != null)
+                {
+                    <option id="optionDefault" selected>Nenhuma Permissão selecionada</option>
+
+                    @foreach (var role in _roles)
+                    {
+
+                        if (_userRoles != null && _userRoles.Where(r => r.RoleId == role.Id).Count() == 0)
+                        {
+                            <option id="optionPermissiion-@role.Id" value="@role.Id">@role.Name</option>
+                        }
+
+                    }
+                }
+            </select>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:center;flex-direction:column">
+            <form id="listRoles" style="display:flex;align-items:center;justify-content:center;margin-top:10px;margin-bottom:1rem">
+            </form>
+            <div id="btnSavePermissions" style="display:none">
+                <button @onclick="GetDataPermissionsSelecte" class="btn btn-outline-success">Salvar Permissões</button>
+            </div>
+        </div>
+
+        @* <form>
+        <div class="row">
+        <div class="col-md-8">
+        <div class="form-group">
+        <label class="control-label">Id</label>
+        <input class="form-control" @bind="@_user.Id" disabled />
+        </div>
+        <div class="form-group">
+        <label class="control-label">Nome</label>
+        <input class="form-control" @bind="@_user.UserName" disabled />
+        </div>
+        <div class="form-group">
+        <label class="control-label">Email</label>
+        <input class="form-control" @bind="@_user.Email" disabled />
+        </div>
+        <div class="form-group">
+        <label class="control-label">Roles: </label>
+        <select @onchange="RoleSelectionChanged" class="form-control">
+        @if (_roles != null)
+        {
+        @foreach (var role in _roles)
+        {
+        <option value="@role.Id">@role.Name</option>
+        }
+        }
+        </select>
+        </div>
+        </div>
+        </div>
+        <div style="margin-top:15px" class="row">
+        <div class="form-group">
+        <input type="button" class="btn btn-outline-dark" @onclick="@Cancel" value="Cancelar" />
+        <input type="button" class="btn btn-primary" @onclick="@UpdateRole" value="Atribuir" />
+        </div>
+        </div>
+        </form> *@
+
+        @if (_userRoles == null)
+        {
+            <div id="erroCategory"><h4>Carregando...</h4></div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Role Id</th>
+                            <th>Permissão</th>
+                            @* <th>Editar</th>
+                        <th>Deletar</th> *@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var userRole in _userRoles)
+                        {
+                            <tr>
+                                <td>@userRole.RoleId</td>
+                                <td>@userRole.RoleName</td>
+                                @* <td><a href="/userPermissions/@userDTO.Id" class="btn btn-primary">Permissões</a></td>
+                        <td><button class="btn btn-danger" @onclick="@(() => DeletarCategoria(userDTO.Id, userDTO.UserName))">Deletar</button></td> *@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @code
+        {
+        List<AspNetRolesDTO>? _roles;
+        IEnumerable<GetDataPermissionsDTO>? _userRoles;
+
+        UserDTO _user = new UserDTO();
+
+        bool Exibir = false;
+
+        [Parameter]
+        public string? Mensagem { get; set; }
+
+        [Parameter]
+        public string? IdUser { get; set; }
+
+
+        protected override async Task OnInitializedAsync()
+        {
+
+            await LoadRoles();
+
+            @* try
+        {
+        _user = await http.GetFromJsonAsync<UserDTO>($"api/user/{Id}");
+        await LoadRoles();
+        }
+        catch (Exception ex)
+        {
+
+        Exibir = true;
+        if (Env.IsDevelopment())
+        {
+        Mensagem = $"Erro ao acessar os dados...\n {ex.StackTrace.ToString()} \n\n {ex.Message}";
+        }
+        else
+        {
+        Mensagem = "Não foi possível ao acessar os dados do perfil do usuário...";
+        }
+        } *@
+        }
+
+        void CloseMessageNotification()
+        {
+            Exibir = false;
+        }
+
+        private async Task LoadRoles()
+        {
+            _user = await _userService.GetUserAsync(IdUser);
+            _userRoles = await _userService.GetUserPermissionsAsync(IdUser);
+            _roles = await _aspNetRolesService.GetRolesAsync();
+            @* var httpResponse = await http.GetAsync("api/AspNetRoles/all");
+
+        if (httpResponse.IsSuccessStatusCode)
+        {
+        _roles = JsonSerializerGeneric<AspNetRolesDTO>.ReturnList(await httpResponse.Content.ReadAsStringAsync());
+        _user.RoleId = _roles[0].Id;
+        } *@
+        }
+
+        private async Task GetDataPermissionsSelecte()
+        {
+            var listIdsRoles = await _js.CreateStructDataPermissions();
+            await _userService.UpdateUserRoleAsync(_user, listIdsRoles);
+            await LoadRoles();
+        }
+
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("users");
+        }
+
+
+        private async Task RoleSelectionChanged(ChangeEventArgs e)
+        {
+            _user.RoleId = e.Value.ToString();
+            await _js.MountSelectedPermissions(_user.RoleId, _roles);
+            _roles = await _aspNetRolesService.GetRolesAsync();
+            _userRoles = await _userService.GetUserPermissionsAsync(IdUser);
+        }
+
+        public async Task UpdateRole()
+        {
+
+            @* await _userService.UpdateUserRoleAsync(_user.Id.ToString(), _user); *@
+
+            @* try
+        {
+        await http.PutAsJsonAsync("api/user", _user);
+        Exibir = true;
+        Mensagem = $"O perfil foi atribuido ao usuário: {_user.UserName} com sucesso";
+        }
+        catch (Exception)
+        {
+
+        throw;
+        } *@
+        }
+
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Index />
+    </NotAuthorized>
+</AuthorizeView>

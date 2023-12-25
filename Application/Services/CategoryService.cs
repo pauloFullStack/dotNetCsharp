@@ -17,10 +17,10 @@ namespace Application.Services
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
-            _userService = userService;     
+            _userService = userService;
         }
 
-        public async Task<NotificationsDTO> AddAsync(CategoryDTO categoryDTO , string userName)
+        public async Task<NotificationsDTO> AddAsync(CategoryDTO categoryDTO, string userName)
         {
             try
             {
@@ -58,14 +58,31 @@ namespace Application.Services
 
         public async Task RemoveAsync(int? id)
         {
-            var categoryEntity = _categoryRepository.GetByIdAsync(id).Result;
-            await _categoryRepository.RemoveAsync(categoryEntity);
+
+            try
+            {
+                var categoryEntity = await _categoryRepository.GetByIdAsync(id);
+                await _categoryRepository.RemoveAsync(categoryEntity);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
-        public async Task UpdateAsync(CategoryDTO categoryDTO)
+        public async Task<NotificationsDTO> UpdateAsync(CategoryDTO categoryDTO)
         {
-            var categoryEntity = _mapper.Map<Category>(categoryDTO);
-            await _categoryRepository.UpdateAsync(categoryEntity);
+            try
+            {
+                var categoryEntity = _mapper.Map<Category>(categoryDTO);
+                await _categoryRepository.UpdateAsync(categoryEntity);
+                return new NotificationsDTO("Voltar para lista de categorias?", "success", $"Categoria {categoryDTO.Name} editado com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                return new NotificationsDTO("Erro de conexão!", "error");
+            }
         }
     }
 }
